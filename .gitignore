@@ -3,3 +3,8 @@
 */.DS_STORE
 */dist
 .vscode
+DatingApp.API/bin
+DatingApp.API/bin/**
+DatingApp.API/obj
+DatingApp.API/obj/**
+DatingApp.API/packages
