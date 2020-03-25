@@ -31,10 +31,20 @@ namespace DatingApp.API
         // ? this is for injecting services
         public void ConfigureServices(IServiceCollection services)
         {
+
             // ? Injects DataContext to connect to a db
             services.AddDbContext<DataContext>(
-              // need to install sqlite entity package for this
-              data => data.UseSqlite("ConnectionString")
+                // need to install sqlite entity package for this
+                // ! connection string should be stored in appsettings.json
+                // data => data.UseSqlite("ConnectionString")
+                data => data.UseSqlite(
+                    Configuration.GetConnectionString("DefaultConnection")
+                  )
+                // then, you need to create a migration with the entity framework tools
+                // ! need to install dotnet-ef tool and package: Microsoft.EntityFrameworkCore.Design
+                // * `dotnet ef migrations add InitialCreate`
+                // * to apply migrations, run `dotnet ef database update`
+
             );
 
             services.AddControllers();
