@@ -51,8 +51,7 @@ namespace DatingApp.API
         }
       );
 
-
-      app.UseHttpsRedirection();
+      // app.UseHttpsRedirection(); // this will redirect all http requests to https requests.
 
       app.UseRouting();
 
