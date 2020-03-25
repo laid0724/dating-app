@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DatingApp.API.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +31,12 @@ namespace DatingApp.API
         // ? this is for injecting services
         public void ConfigureServices(IServiceCollection services)
         {
+            // ? Injects DataContext to connect to a db
+            services.AddDbContext<DataContext>(
+              // need to install sqlite entity package for this
+              data => data.UseSqlite("ConnectionString")
+            );
+
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
