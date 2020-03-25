@@ -14,53 +14,59 @@ using Microsoft.OpenApi.Models;
 
 namespace DatingApp.API
 {
-  public class Startup
-  {
-    public Startup(IConfiguration configuration)
+    public class Startup
     {
-      Configuration = configuration;
-    }
-
-    public IConfiguration Configuration { get; }
-
-    // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
-    {
-      services.AddControllers();
-      services.AddSwaggerGen(c =>
+        // ? Startup constructor, dependency injection
+        public Startup(IConfiguration configuration)
         {
-          c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dating App API", Version = "v1" });
+            // ? this injects configuration settings from appsettings.json
+            Configuration = configuration;
         }
-      );
-    }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-      if (env.IsDevelopment())
-      {
-        app.UseDeveloperExceptionPage();
-      }
+        public IConfiguration Configuration { get; }
 
-      app.UseSwagger();
-      app.UseSwaggerUI(c =>
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // ? this is for injecting services
+        public void ConfigureServices(IServiceCollection services)
         {
-          c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            // To serve the Swagger UI at the app's root (http://localhost:<port>/), set the RoutePrefix property to an empty string:
-            // c.RoutePrefix = string.Empty;
+            services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+              {
+                  c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dating App API", Version = "v1" });
+              }
+            );
         }
-      );
 
-      // app.UseHttpsRedirection(); // this will redirect all http requests to https requests.
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        // ? this is for configuring the http request pipeline; everything added here are middlewares.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
-      app.UseRouting();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+              {
+                  c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                  // To serve the Swagger UI at the app's root (http://localhost:<port>/), set the RoutePrefix property to an empty string:
+                  // c.RoutePrefix = string.Empty;
+              }
+            );
 
-      app.UseAuthorization();
+            // ? this will redirect all http requests to https requests.
+            // app.UseHttpsRedirection(); 
 
-      app.UseEndpoints(endpoints =>
-      {
-        endpoints.MapControllers();
-      });
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+        }
     }
-  }
 }
