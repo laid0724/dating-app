@@ -54,6 +54,8 @@ namespace DatingApp.API
                   c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dating App API", Version = "v1" });
               }
             );
+
+            services.AddCors(); // ? inject allow CORS service
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -78,6 +80,14 @@ namespace DatingApp.API
             // app.UseHttpsRedirection(); 
 
             app.UseRouting();
+
+            // ? set CORS policy with middleware; this needs to go after UseRouting and before UseAuth & Use Endpoints:
+            app.UseCors(c => c
+                // .WithOrigins() // ? you can specify origin, but for development purposes, allow all:
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+            );
 
             app.UseAuthorization();
 
