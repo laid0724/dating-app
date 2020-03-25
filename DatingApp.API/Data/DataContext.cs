@@ -1,4 +1,4 @@
-// ? this is for DB connections. 
+// ? this is for setting up DB connections, forming db structure for migrations, etc. 
 // ? You need to install and import entity framework core package for this to work. 
 
 using DatingApp.API.Models;
