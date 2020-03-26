@@ -1,8 +1,10 @@
+using System.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 namespace DatingApp.API
@@ -28,10 +31,10 @@ namespace DatingApp.API
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        // ? this is for injecting services
+        // ? this is for registering injectable services (DI), i.e., services that can be injected in constructor in Angular
         public void ConfigureServices(IServiceCollection services)
+        // * ordering does not matter for services; only for middlewares in Configure()
         {
-
             // ? Injects DataContext to connect to a db
             services.AddDbContext<DataContext>(
                 // need to install sqlite entity package for this
@@ -56,6 +59,28 @@ namespace DatingApp.API
             );
 
             services.AddCors(); // ? inject allow CORS service
+
+            services.AddScoped<IAuthRepository, AuthRepository>(); // ? this makes AuthRepository injectable to other classes.
+
+            // ? this adds authentication service so that controllers with the [Authorize] attribute know what to do to authenticate the requests
+            services
+                .AddAuthentication(
+                  JwtBearerDefaults.AuthenticationScheme  // ? Authenticate via JWT
+                )
+                .AddJwtBearer(
+                  options => options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      // ? here, we specify the options we want to authenticate against
+                      ValidateIssuerSigningKey = true, // ? tell options to validate key
+                      IssuerSigningKey = new SymmetricSecurityKey( // ? get key from env file
+                      Encoding.ASCII.GetBytes(
+                        Configuration.GetSection("AppSettings:Token").Value
+                      )
+                    ),
+                      ValidateIssuer = false, // ? right now it's local host, so set to false
+                      ValidateAudience = false, // ? right now it's local host, so set to false
+                  }
+                );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -88,6 +113,9 @@ namespace DatingApp.API
                 .AllowAnyMethod()
                 .AllowAnyHeader()
             );
+
+            // ? register the injected authentication service as a middleware; has to be before .UseAuthorization()!
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

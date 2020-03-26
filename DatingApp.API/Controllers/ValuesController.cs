@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace DatingApp.API.Controllers
 {
+    [Authorize] 
+    // ? this tells .NET that every calls made to this controller must be an authorized request, i.e., logged in,
+    // ? and is handled through authentication middleware
+    // ? all methods below are protected and returns 401 Unauthorized unless logged-in, unless they have the [AllowAnonymous] attribute.
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
@@ -39,6 +44,7 @@ namespace DatingApp.API.Controllers
         }
 
         // * GET api/values/5
+        [AllowAnonymous] // ? this tells .NET that this specific endpoint doesn't need authorization
         [HttpGet("{id}")]
         // not async:
         // public IActionResult GetValue(int id)
