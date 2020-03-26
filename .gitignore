@@ -8,3 +8,6 @@ DatingApp.API/bin/**
 DatingApp.API/obj
 DatingApp.API/obj/**
 DatingApp.API/packages
+DatingApp.API/*.db
+DatingApp.API/*.db-shm
+DatingApp.API/*.db-wal
