@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { AuthService, UserDTO } from '../services/auth.service';
 
 @Component({
   selector: 'app-nav',
@@ -6,16 +7,34 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit {
+  model: UserDTO = {
+    username: null,
+    password: null
+  };
 
-  model: any = {};
+  constructor(private authService: AuthService) {}
 
-  constructor() { }
+  ngOnInit(): void {}
 
-  ngOnInit(): void {
+  login(): void {
+    this.authService.login(this.model)
+      .subscribe(
+        success => {
+          console.log('Logged in successfully.');
+        },
+        error => {
+          console.log('Logged in failed:: ', error);
+        }
+      );
   }
 
-  login() {
-
+  loggedIn(): boolean {
+    const token = localStorage.getItem('token');
+    return !!token;
   }
 
+  logout(): void {
+    localStorage.removeItem('token');
+    console.log('Logged out.');
+  }
 }
