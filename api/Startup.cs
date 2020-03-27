@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using DatingApp.API.Helpers;
 
 namespace DatingApp.API
 {
@@ -90,6 +94,27 @@ namespace DatingApp.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                // ? global exception handler middleware for all errors in production mode
+                // ! if this is not implemented, server will just return 500 internal server error without any message to the client's console.
+                // :: returns 500 status code whenever the server crashes, along with the error message produced by .NET to the client side.
+                app.UseExceptionHandler(builder =>
+                  builder.Run(async context =>
+                  {
+                      context.Response.StatusCode = (int)HttpStatusCode.InternalServerError; // set response status code to 500
+
+                      var error = context.Features.Get<IExceptionHandlerFeature>(); // intercepts exception with handler
+
+                      if (error != null)
+                      {
+                          // ! return error message as response, but you need to apply CORS for this to show on client side. 
+                          context.Response.AddApplicationError(error.Error.Message); // ? applying CORS to this specific response through a custom extension .AddApplicationError()
+                          await context.Response.WriteAsync(error.Error.Message);
+                      }
+                  })
+                );
             }
 
             app.UseSwagger();

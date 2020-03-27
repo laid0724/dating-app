@@ -25,7 +25,7 @@ namespace DatingApp.API.Controllers
         private readonly IConfiguration config;
 
         public AuthController(
-          DataContext context, 
+          DataContext context,
           IAuthRepository repo,
           IConfiguration config
         )
@@ -71,7 +71,7 @@ namespace DatingApp.API.Controllers
 
             if (userFromRepo == null)
             {
-              return Unauthorized(); // ! dont return any hints as to whether user exists or not for security concerns
+                return Unauthorized(); // ! dont return any hints as to whether user exists or not for security concerns
             }
 
             /* 
@@ -88,7 +88,7 @@ namespace DatingApp.API.Controllers
             // first, we want to build up a token to return to the users, with two bits of information included: user id and username, but as a JWT token.
             // the server can then take a look at this token and check its validity without having to look inside at the database.
 
-            Claim[] claims = new [] // ? first, we want to gather the user id and username as Claims
+            Claim[] claims = new[] // ? first, we want to gather the user id and username as Claims
             {
               new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()), // ? params: (1) type, (2) value - which needs to be string
               new Claim(ClaimTypes.Name, userFromRepo.Username.ToString()),
@@ -108,9 +108,9 @@ namespace DatingApp.API.Controllers
             // then, create a security token descriptor, which will contain the claims, expiry date, and key for the token:
             SecurityTokenDescriptor tokenDescriptor = new SecurityTokenDescriptor
             {
-              Subject = new ClaimsIdentity(claims),
-              Expires = DateTime.Now.AddDays(1),
-              SigningCredentials = credential
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.Now.AddDays(1),
+                SigningCredentials = credential
             };
 
             // then, add a token handler to pass in the token descriptor, which will create the JWT token that the server is going to pass back to the client:
@@ -119,8 +119,9 @@ namespace DatingApp.API.Controllers
 
             // lastly, return the token as an object to the client
             return Ok(
-              new {
-                token = tokenHandler.WriteToken(token)
+              new
+              {
+                  token = tokenHandler.WriteToken(token)
               }
             );
 

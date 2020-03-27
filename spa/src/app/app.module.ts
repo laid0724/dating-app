@@ -10,11 +10,15 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from './services/auth.service';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
+import { ErrorInterceptorProvider } from './services/error.interceptor';
 
 @NgModule({
   declarations: [AppComponent, NavComponent, HomeComponent, RegisterComponent],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule, FormsModule],
-  providers: [AuthService], // ? if anything is injected in root, e.g., services, they need to be registered - i.e., provided - in here.
+  providers: [
+    AuthService,
+    ErrorInterceptorProvider
+  ], // ? if anything is injected in root, e.g., services, they need to be registered - i.e., provided - in here.
   bootstrap: [AppComponent]
 })
 export class AppModule {}
