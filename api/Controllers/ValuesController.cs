@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
+using DatingApp.API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace DatingApp.API.Controllers
 {
@@ -71,20 +73,33 @@ namespace DatingApp.API.Controllers
 
         // * POST api/values
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post(string value)
         {
+          var valueToAdd = new Value() {Name = value};
+          context.Values.Add(valueToAdd);
+          await context.SaveChangesAsync();
+          return Ok();
         }
 
         // * PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, string value)
         {
+          // TODO: 
         }
 
         // * DELETE api/values/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+          var valueToDelete = await context.Values.SingleOrDefaultAsync(value => value.Id == id);
+          if (valueToDelete == null) {
+            return NotFound();
+          }
+          
+          context.Values.Remove(valueToDelete);
+          await context.SaveChangesAsync();
+          return NoContent();
         }
     }
 }
