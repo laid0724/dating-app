@@ -20,6 +20,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using DatingApp.API.Helpers;
+using AutoMapper;
 
 namespace DatingApp.API
 {
@@ -54,17 +55,41 @@ namespace DatingApp.API
 
             );
 
-            services.AddControllers();
+            services
+              .AddControllers()
+              .AddNewtonsoftJson(opt =>
+                {
+                  opt.SerializerSettings.ReferenceLoopHandling =
+                  Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                }
+              );
 
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(opt =>
               {
-                  c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dating App API", Version = "v1" });
+                  opt.SwaggerDoc("v1", new OpenApiInfo { Title = "My Api", Version = "v1" });
+
+                  // ? add authorization header to all API requests made through Swagger
+                  opt.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+                  {
+                      Description = @"Paste your JWT token here.",
+                      Type = SecuritySchemeType.Http,
+                      BearerFormat = "JWT",
+                      In = ParameterLocation.Header,
+                      Scheme = "bearer"
+                  });
+                  // ? add auth header for [Authorize] endpoints
+                  opt.OperationFilter<AddAuthHeaderOperationFilter>();
               }
             );
 
             services.AddCors(); // ? inject allow CORS service
 
+            services.AddAutoMapper( // ? inject AutoMapper
+              typeof(DatingRepository).Assembly // ? tell AutoMapper which assembly to look into
+            ); 
+
             services.AddScoped<IAuthRepository, AuthRepository>(); // ? this makes AuthRepository injectable to other classes.
+            services.AddScoped<IDatingRepository, DatingRepository>(); // ? this makes DatingRepository injectable to other classes.
 
             // ? this adds authentication service so that controllers with the [Authorize] attribute know what to do to authenticate the requests
             services

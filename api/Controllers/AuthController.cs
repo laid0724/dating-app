@@ -138,13 +138,13 @@ namespace DatingApp.API.Controllers
             */
         }
 
-        [Description("Read all users")]
-        [HttpGet("users")]
-        public async Task<IActionResult> GetUsers()
-        {
-            var users = await context.Users.ToListAsync();
-            // return Ok(users.Select(user => user.Username));
-            return Ok(users);
-        }
+        // [Description("Read all users")]
+        // [HttpGet("users")]
+        // public async Task<IActionResult> GetUsers()
+        // {
+        //     var users = await context.Users.ToListAsync();
+        //     // return Ok(users.Select(user => user.Username));
+        //     return Ok(users);
+        // }
     }
 }
