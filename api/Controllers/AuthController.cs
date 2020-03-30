@@ -143,7 +143,8 @@ namespace DatingApp.API.Controllers
         public async Task<IActionResult> GetUsers()
         {
             var users = await context.Users.ToListAsync();
-            return Ok(users.Select(user => user.Username));
+            // return Ok(users.Select(user => user.Username));
+            return Ok(users);
         }
     }
 }
