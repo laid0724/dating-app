@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { UserDTO, AuthService } from '../services/auth.service';
+import { AlertifyService } from '../services/alertify.service';
 
 @Component({
   selector: 'app-register',
@@ -14,14 +15,17 @@ export class RegisterComponent implements OnInit {
     password: null
   };
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private alertify: AlertifyService
+  ) {}
 
   ngOnInit(): void {}
 
   register() {
     this.authService.register(this.model).subscribe(
-      success => console.log('registration successful'),
-      error => console.log(error)
+      success => this.alertify.success('Registration successful.'),
+      error => this.alertify.error(error)
     );
   }
 

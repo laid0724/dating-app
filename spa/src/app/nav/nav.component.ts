@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService, UserDTO } from '../services/auth.service';
+import { AlertifyService } from '../services/alertify.service';
 
 @Component({
   selector: 'app-nav',
@@ -12,20 +13,22 @@ export class NavComponent implements OnInit {
     password: null
   };
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private alertify: AlertifyService
+  ) {}
 
   ngOnInit(): void {}
 
   login(): void {
-    this.authService.login(this.model)
-      .subscribe(
-        success => {
-          console.log('Logged in successfully.');
-        },
-        error => {
-          console.log('Logged in failed:: ', error);
-        }
-      );
+    this.authService.login(this.model).subscribe(
+      success => {
+        this.alertify.success('Logged in successfully.');
+      },
+      error => {
+        this.alertify.error(`Login failed:: ${error}`);
+      }
+    );
   }
 
   loggedIn(): boolean {
@@ -35,6 +38,6 @@ export class NavComponent implements OnInit {
 
   logout(): void {
     localStorage.removeItem('token');
-    console.log('Logged out.');
+    this.alertify.message('Logged out.');
   }
 }
