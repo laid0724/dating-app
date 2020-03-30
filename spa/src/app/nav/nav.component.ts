@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthService, UserDTO } from '../services/auth.service';
 import { AlertifyService } from '../services/alertify.service';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-nav',
@@ -15,7 +16,8 @@ export class NavComponent implements OnInit {
 
   constructor(
     public authService: AuthService,
-    private alertify: AlertifyService
+    private alertify: AlertifyService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {}
@@ -27,6 +29,9 @@ export class NavComponent implements OnInit {
       },
       error => {
         this.alertify.error(`Login failed:: ${error}`);
+      },
+      () => { // ? third params in subsribe (no arguments allowed) is for observable complete
+        this.router.navigate(['/members']);
       }
     );
   }
@@ -38,5 +43,6 @@ export class NavComponent implements OnInit {
   logout(): void {
     localStorage.removeItem('token');
     this.alertify.message('Logged out.');
+    this.router.navigate(['/']);
   }
 }
