@@ -22,3 +22,8 @@ Drop Db:
 
 # Angular
 
+`npm i`
+
+Run Project:
+
+`ng serve`
