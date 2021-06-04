@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -23,6 +24,9 @@ namespace API.Controllers
         }
 
         [Description("Get Users")]
+        // with [Authorize], the client will need JWT authorization as setup in this app to be able to call this API
+        // add "Authorization: Bearer <JWT token string>" in headers as key:value pair
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
@@ -31,6 +35,7 @@ namespace API.Controllers
         }
 
         [Description("Get One User")]
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {
