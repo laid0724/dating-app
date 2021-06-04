@@ -11,9 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseApiController
     {
         private readonly DataContext _context;
         private readonly ILogger<UsersController> _logger;
@@ -37,7 +35,8 @@ namespace API.Controllers
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
-            if (user == null) {
+            if (user == null)
+            {
                 return NotFound();
             }
             return Ok(user);
