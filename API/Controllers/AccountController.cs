@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using API.DTOs;
+using API.Interfaces;
 
 namespace API.Controllers
 {
@@ -18,15 +19,17 @@ namespace API.Controllers
     {
         private readonly DataContext _context;
         private readonly ILogger<AccountController> _logger;
+        private readonly ITokenService _tokenService;
 
-        public AccountController(DataContext context, ILogger<AccountController> logger)
+        public AccountController(DataContext context, ILogger<AccountController> logger, ITokenService tokenService)
         {
+            _tokenService = tokenService;
             _context = context;
             _logger = logger;
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
             // Note: this logic is not required once you use the [Required] attribute on the DTO clas.
             // if (String.IsNullOrWhiteSpace(registerDto.UserName) || String.IsNullOrWhiteSpace(registerDto.Password))
@@ -48,6 +51,7 @@ namespace API.Controllers
 
             // hash password and generate salt for hashed password so no users may have
             // the same hashed password even if passwords are identical.
+            // note: each newly instantiated HMACSHA512 class generates a new random key
             var user = new AppUser
             {
                 UserName = registerDto.UserName.ToLower(), // always use lowercase when storing emails & username!
@@ -58,7 +62,58 @@ namespace API.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new UserDto
+            {
+                UserName = user.UserName,
+                Token = _tokenService.CreateToken(user)
+            });
+        }
+
+        /* 
+            Token Authentication Mechanism
+            1. Client sends usernaem + password to server
+            2. Server validates credentials and sends back a JWT, which client will store in machine/browser.
+            3. Then, client will send requests with JWT token in header, which server will verify as valid and
+                process requests accordingly.
+
+            JSON Web Token (JWT) Benefits:
+            1. No session to manage, JWTs are self contained tokens.
+            2. Portable - a single token can be used with multiple backends as long as they share the same signature/secret key to validate the token.
+            3. No cookies required, thus mobile friendly 
+            4. Performance - once a token is issued, there is no need to make a database request to verify a users authentication.
+        */
+
+        [HttpPost("login")]
+        public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+        {
+            var user = await _context.Users.SingleOrDefaultAsync(user => user.UserName.ToLower() == loginDto.UserName.ToLower());
+
+            if (user == null)
+            {
+                // best security practice is to not tell whether either username or password is wrong.
+                return Unauthorized("Invalid username or password.");
+            }
+
+            // HMACSHA512 class takes an overload of a key that is generated via this class
+            // we are using the user's salt value as a key to hash the password that is being sent in via
+            // the loginDto object. 
+            using var hmac = new HMACSHA512(user.PasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+
+            // if the hashed value is identical to the db user's PasswordHash, then it is the correct password.
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != user.PasswordHash[i])
+                {
+                    return Unauthorized("Invalid username or password.");
+                }
+            }
+
+            return Ok(new UserDto
+            {
+                UserName = user.UserName,
+                Token = _tokenService.CreateToken(user)
+            });
         }
 
         private async Task<bool> UserExists(string userName)
