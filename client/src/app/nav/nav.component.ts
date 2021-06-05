@@ -2,7 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { Observable } from 'rxjs';
 import { User } from 'src/app/models/users';
 import { AccountService } from '../services/account.service';
@@ -19,8 +18,7 @@ export class NavComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService,
-    private router: Router,
-    private toastr: ToastrService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -44,10 +42,6 @@ export class NavComponent implements OnInit {
     this.accountService.login(this.form.value).subscribe(
       (res: User) => {
         this.router.navigateByUrl('/members');
-      },
-      (err: HttpErrorResponse) => {
-        console.error(err);
-        this.toastr.error(err.error);
       }
     );
   }
