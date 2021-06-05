@@ -38,9 +38,7 @@ export class NavComponent implements OnInit {
     }
 
     this.accountService.login(this.form.value).subscribe(
-      (res: User) => {
-        console.log(res);
-      },
+      (res: User) => {},
       (err: HttpErrorResponse) => {
         console.error(err);
       }

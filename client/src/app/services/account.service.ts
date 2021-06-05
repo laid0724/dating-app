@@ -21,6 +21,23 @@ export class AccountService {
 
   constructor(private http: HttpClient) {}
 
+  setCurrentUser(user: User): void {
+    this.currentUserSource.next(user);
+  }
+
+  register(userCredential: UserCredential): Observable<User> {
+    return this.http
+      .post<User>(this.endpoint + '/register', userCredential)
+      .pipe(
+        tap((user: User) => {
+          if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+            this.currentUserSource.next(user);
+          }
+        })
+      );
+  }
+
   login(userCredential: UserCredential): Observable<User> {
     return this.http.post<User>(this.endpoint + '/login', userCredential).pipe(
       tap((user: User) => {
@@ -30,10 +47,6 @@ export class AccountService {
         }
       })
     );
-  }
-
-  setCurrentUser(user: User): void {
-    this.currentUserSource.next(user);
   }
 
   logout(): void {
