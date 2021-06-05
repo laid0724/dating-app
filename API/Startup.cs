@@ -19,6 +19,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using API.Extensions;
+using API.Middleware;
 
 namespace API
 {
@@ -98,6 +99,9 @@ namespace API
             }
 
             // the ordering matters here!!!
+
+            // this must be placed on top, since it is the first middleware that will be used to catch internal server errors and format it into ApiException
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 
