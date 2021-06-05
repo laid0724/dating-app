@@ -13,6 +13,7 @@ import { MemberListComponent } from './members/member-list/member-list.component
 import { MemberDetailComponent } from './members/member-detail/member-detail.component';
 import { ListsComponent } from './lists/lists.component';
 import { MessagesComponent } from './messages/messages.component';
+import { ToastrModule } from 'ngx-toastr';
 
 const ngxBootstrapModules = [BsDropdownModule.forRoot()];
 
@@ -34,6 +35,9 @@ const ngxBootstrapModules = [BsDropdownModule.forRoot()];
     BrowserAnimationsModule,
     ReactiveFormsModule,
     ...ngxBootstrapModules,
+    ToastrModule.forRoot({
+      positionClass: 'toast-bottom-right',
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],
