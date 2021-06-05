@@ -1,10 +1,12 @@
+# Description
+
+A simple desktop-only dating app built with .NET Core 5, Angular 10 and Bootstrap 4. 
+
+Built just for fun & practice.
+
 # Dotnet API
 
 `cd` to `API`
-
-Run Project:
-
-`dotnet watch run`
 
 Generate Migrations:
 
@@ -17,6 +19,10 @@ Apply Migrations/Create Database:
 Drop Db:
 
 `dotnet ef database drop`
+
+Run Project:
+
+`dotnet watch run`
 
 ---
 
