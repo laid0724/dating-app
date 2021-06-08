@@ -23,7 +23,7 @@ namespace API.Data
         {
             return await _context.Users
                 .Include(e => e.Photos)
-                .SingleOrDefaultAsync(e => e.UserName == username);
+                .SingleOrDefaultAsync(e => e.UserName.ToLower().Trim() == username.ToLower().Trim());
         }
 
         public async Task<IEnumerable<AppUser>> GetUsersAsync()
