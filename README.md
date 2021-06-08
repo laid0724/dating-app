@@ -32,6 +32,8 @@ Run Project:
 
 `dotnet watch run`
 
+Note: seed data are generated via: https://www.json-generator.com/
+
 ---
 
 # Angular
