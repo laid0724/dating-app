@@ -30,4 +30,8 @@ export class MembersService {
       // , httpOptions
     );
   }
+
+  updateMember(member: Member): Observable<null> {
+    return this.http.put<null>(this.endpoint, member);
+  }
 }
