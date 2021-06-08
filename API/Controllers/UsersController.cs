@@ -12,6 +12,10 @@ using Microsoft.Extensions.Logging;
 
 namespace API.Controllers
 {
+    // with [Authorize] in this location instead of individual methods,
+    // ALL methods in this controller will need JWT token to be able to call this API
+    // add "Authorization: Bearer <JWT token string>" in headers as key:value pair
+    [Authorize]
     public class UsersController : BaseApiController
     {
         private readonly DataContext _context;
@@ -24,9 +28,6 @@ namespace API.Controllers
         }
 
         [Description("Get Users")]
-        // with [Authorize], the client will need JWT authorization as setup in this app to be able to call this API
-        // add "Authorization: Bearer <JWT token string>" in headers as key:value pair
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
@@ -35,7 +36,6 @@ namespace API.Controllers
         }
 
         [Description("Get One User")]
-        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<AppUser>> GetUser(int id)
         {
