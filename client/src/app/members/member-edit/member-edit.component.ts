@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
@@ -17,6 +17,16 @@ export class MemberEditComponent implements OnInit {
   user: User;
 
   form: FormGroup;
+
+  // allows you to access browser events, in this case, binding to the leaving the page event (unload)
+  // this triggers the browser API when users leave the page to go to another site
+  @HostListener('window:beforeunload', ['$event']) unloadNotification(
+    $event: any
+  ): void {
+    if (this.form.dirty) {
+      $event.returnValue = true;
+    }
+  }
 
   constructor(
     private accountService: AccountService,
