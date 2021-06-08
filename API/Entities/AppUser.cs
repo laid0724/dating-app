@@ -21,9 +21,9 @@ namespace API.Entities
         public string City { get; set; }
         public string Country { get; set; }
         public ICollection<Photo> Photos { get; set; } // ICollection is for one to many relationships
-        public int GetAge()
-        {
-            return DateOfBirth.CalculateAge();
-        }
+        // public int GetAge()
+        // {
+        //     return DateOfBirth.CalculateAge();
+        // }
     }
 }
