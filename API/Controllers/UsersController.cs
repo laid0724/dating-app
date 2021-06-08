@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using API.Data;
 using API.DTOs;
 using API.Entities;
+using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,13 +21,13 @@ namespace API.Controllers
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly UserRepository _userRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly ILogger<UsersController> _logger;
 
         // instead of importing the entire db context, we are just injecting the UserRepository service.
         // for benefits of the repository pattern, see: https://www.c-sharpcorner.com/UploadFile/8a67c0/repository-pattern-and-generic-repository-pattern/
-        public UsersController(UserRepository userRepository, IMapper mapper, ILogger<UsersController> logger)
+        public UsersController(IUserRepository userRepository, IMapper mapper, ILogger<UsersController> logger)
         {
             _mapper = mapper;
             _userRepository = userRepository;
