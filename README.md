@@ -34,6 +34,8 @@ Run Project:
 
 Note: seed data are generated via: https://www.json-generator.com/
 
+To quickly convert the models to typescript interfaces, use the JSON to TS extension in VSCode and paste the returned values from the API there.
+
 ---
 
 # Angular
