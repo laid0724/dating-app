@@ -18,12 +18,14 @@ namespace API.Controllers
     [Authorize]
     public class UsersController : BaseApiController
     {
-        private readonly DataContext _context;
+        private readonly UserRepository _userRepository;
         private readonly ILogger<UsersController> _logger;
 
-        public UsersController(DataContext context, ILogger<UsersController> logger)
+        // instead of importing the entire db context, we are just injecting the UserRepository service.
+        // for benefits of the repository pattern, see: https://www.c-sharpcorner.com/UploadFile/8a67c0/repository-pattern-and-generic-repository-pattern/
+        public UsersController(UserRepository userRepository, ILogger<UsersController> logger)
         {
-            _context = context;
+            _userRepository = userRepository;
             _logger = logger;
         }
 
@@ -31,15 +33,14 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
-            var users = await _context.Users.ToListAsync();
-            return Ok(users);
+            return Ok(await _userRepository.GetUsersAsync());
         }
 
         [Description("Get One User")]
-        [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetUser(int id)
+        [HttpGet("{username}")]
+        public async Task<ActionResult<AppUser>> GetUser(string userName)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userRepository.GetUserByUserNameAsync(userName);
             if (user == null)
             {
                 return NotFound();
