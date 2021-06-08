@@ -1,4 +1,5 @@
 using API.Data;
+using API.Helpers;
 using API.Interfaces;
 using API.Services;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,8 @@ namespace API.Extensions
             services.AddScoped<ITokenService, TokenService>();
 
             services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly); // add Automapper and tell it where to find mapping profiles
 
             services.AddDbContext<DataContext>(options =>
             {
