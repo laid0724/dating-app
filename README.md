@@ -8,9 +8,17 @@ Built just for fun & practice.
 
 `cd` to `API`
 
-Generate Migrations:
+Generate Initial Migrations:
 
 `dotnet ef migrations add ${MigrationName} -o Data/Migrations`
+
+Generate Migrations:
+
+`dotnet ef migrations add ${MigrationName}`
+
+Remove Migrations:
+
+`dotnet ef migrations remove`
 
 Apply Migrations/Create Database:
 
