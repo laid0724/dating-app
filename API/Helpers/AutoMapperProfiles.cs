@@ -25,6 +25,9 @@ namespace API.Helpers
                     opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge())
                 );
             CreateMap<Photo, PhotoDto>();
+
+            // reverse map from dto to entity model:
+            CreateMap<MemberUpdateDto, AppUser>();
         }
     }
 }

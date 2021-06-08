@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -52,6 +53,30 @@ namespace API.Controllers
             }
 
             return Ok(user);
+        }
+
+        [Description("Update user info")]
+        [HttpPut]
+        public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+        {
+            /*
+                here, we are directly getting the username via the token because we don't trust the user/client
+                to provide the correct one.
+
+                we can access something called Claims from an http request, where we can extract and read the current
+                user sending the request as a ClaimsPrincipal, to read more, see:
+                https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0
+            */
+            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var user = await _userRepository.GetUserByUserNameAsync(username);
+
+            _mapper.Map(memberUpdateDto, user);
+
+            _userRepository.Update(user);
+
+            if (await _userRepository.SaveAllAsync()) return NoContent();
+
+            return BadRequest("Failed to update user");
         }
     }
 }
