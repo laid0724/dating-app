@@ -1,0 +1,17 @@
+.card {
+  &-img {
+    margin: 25px;
+    width: 85%;
+    height: 85%;
+  }
+
+  &-body {
+    padding: 0 25px;
+  }
+
+  &-footer {
+    padding: 10px 15px;
+    background-color: #fff;
+    border-top: none;
+  }
+}
