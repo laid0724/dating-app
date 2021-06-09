@@ -5,6 +5,7 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { FileUploadModule } from "ng2-file-upload";
 
 const ngxBootstrapModules = [BsDropdownModule.forRoot(), TabsModule.forRoot()];
 
@@ -18,6 +19,7 @@ const ngxBootstrapModules = [BsDropdownModule.forRoot(), TabsModule.forRoot()];
     }),
     NgxGalleryModule, // see: https://github.com/kolkov/ngx-gallery
     NgxSpinnerModule, // see: https://github.com/Napster2210/ngx-spinner
+    FileUploadModule, // see: https://valor-software.com/ng2-file-upload/
   ],
   exports: [
     BsDropdownModule,
@@ -25,6 +27,7 @@ const ngxBootstrapModules = [BsDropdownModule.forRoot(), TabsModule.forRoot()];
     TabsModule,
     NgxGalleryModule,
     NgxSpinnerModule,
+    FileUploadModule
   ],
 })
 export class SharedModule {}
