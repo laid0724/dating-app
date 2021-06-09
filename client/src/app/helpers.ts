@@ -3,10 +3,16 @@ import { FormControl, FormGroup } from '@angular/forms';
 export function controlHasError(
   form: FormGroup,
   formControlName: string,
-  error: string
+  errors: string[]
 ): boolean {
   const formControl = form.get(formControlName) as FormControl;
-  return (
-    formControl.touched && formControl.hasError(error) && formControl.invalid
-  );
+  let errorCount = 0;
+
+  errors.forEach((err) => {
+    if (formControl.hasError(err)) {
+      errorCount++;
+    }
+  });
+
+  return formControl.touched && formControl.invalid && errorCount > 0;
 }
