@@ -26,13 +26,15 @@ namespace API.Controllers
     {
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IPhotoService _photoService;
         private readonly ILogger<UsersController> _logger;
 
         // instead of importing the entire db context, we are just injecting the UserRepository service.
         // for benefits of the repository pattern, see: https://www.c-sharpcorner.com/UploadFile/8a67c0/repository-pattern-and-generic-repository-pattern/
-        public UsersController(IUserRepository userRepository, IMapper mapper, ILogger<UsersController> logger)
+        public UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService, ILogger<UsersController> logger)
         {
             _mapper = mapper;
+            _photoService = photoService;
             _userRepository = userRepository;
             _logger = logger;
         }
@@ -45,7 +47,7 @@ namespace API.Controllers
         }
 
         [Description("Get One User")]
-        [HttpGet("{username}")]
+        [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
             var user = await _userRepository.GetMemberAsync(username);
@@ -78,6 +80,52 @@ namespace API.Controllers
             if (await _userRepository.SaveAllAsync()) return NoContent();
 
             return BadRequest("Failed to update user");
+        }
+
+        [Description("Upload photo")]
+        [HttpPost("add-photo")]
+        public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
+        {
+            var user = await _userRepository.GetUserByUserNameAsync(User.GetUsername());
+            var result = await _photoService.AddPhotoAsync(file);
+
+            if (result.Error != null)
+            {
+                return BadRequest(result.Error.Message);
+            }
+
+            var photo = new Photo
+            {
+                Url = result.SecureUrl.AbsoluteUri,
+                PublicId = result.PublicId
+            };
+
+            if (user.Photos.Count == 0)
+            {
+                photo.IsMain = true;
+            }
+
+            user.Photos.Add(photo);
+
+            if (await _userRepository.SaveAllAsync())
+            {
+                /* 
+                    return a 201 Created response when we add resource to the server
+                    - here, we assign the GetUser method with a Name attribute so its route can be accessed here
+                        - we also pass in a route value of username so that the route parameter is supplied
+                    
+                    this way, the response from the server will come back with a "Location" property, indicating the url
+                    of where the photo is stored - in this case, the user's profile url
+
+                */
+                return CreatedAtRoute(
+                    "GetUser", 
+                    new { username = user.UserName },  // this supplies the route param with the username for this method
+                    _mapper.Map<PhotoDto>(photo)
+                );
+            }
+
+            return BadRequest("Problem adding photo");
         }
     }
 }
