@@ -189,7 +189,9 @@ namespace API.Controllers
             return BadRequest("Failed to delete photo.");
         }
 
-        public async Task<AppUser> GetAppUser()
+        // when method is declared public in a controller without REST attributes, swagger will throw ambiguous http error
+        // use protected to solve this issue
+        protected async Task<AppUser> GetAppUser()
         {
             /*
                 here, we are directly getting the username via Claims because we don't trust the user/client
