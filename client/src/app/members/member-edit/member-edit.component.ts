@@ -1,7 +1,8 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
+import { controlHasError } from 'src/app/helpers';
 import { Member } from 'src/app/models/member';
 import { User } from 'src/app/models/users';
 import { AccountService } from 'src/app/services/account.service';
@@ -17,6 +18,12 @@ export class MemberEditComponent implements OnInit {
   user: User;
 
   form: FormGroup;
+
+  controlHasError: (
+    form: FormGroup,
+    formControlName: string,
+    error: string
+  ) => boolean = controlHasError;
 
   // allows you to access browser events, in this case, binding to the leaving the page event (unload)
   // this triggers the browser API when users leave the page to go to another site
@@ -46,6 +53,7 @@ export class MemberEditComponent implements OnInit {
 
   buildForm(): FormGroup {
     return this.fb.group({
+      knownAs: [null, Validators.required],
       introduction: [null],
       lookingFor: [null],
       interests: [null],
@@ -62,10 +70,17 @@ export class MemberEditComponent implements OnInit {
   }
 
   updateMember(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.toastr.error(
+        'Please make sure that all required fields are filled out.'
+      );
+      return;
+    }
     this.membersService
       .updateMember({
         ...this.member,
-        ...this.form.value
+        ...this.form.value,
       } as Member)
       .subscribe(() => {
         this.toastr.success('Profile updated successfully.');

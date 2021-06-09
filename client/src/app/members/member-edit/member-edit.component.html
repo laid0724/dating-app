@@ -53,6 +53,15 @@
       <tabset class="member-tabset">
         <tab heading="About {{ member.knownAs }}">
           <form [formGroup]="form">
+            <h4 class="mt-2">Known As</h4>
+            <input
+              type="text"
+              formControlName="knownAs"
+              class="form-control"
+              [ngClass]="{
+                'is-invalid': controlHasError(form, 'knownAs', 'required')
+              }"
+            />
             <h4 class="mt-2">Description</h4>
             <textarea
               class="form-control"
