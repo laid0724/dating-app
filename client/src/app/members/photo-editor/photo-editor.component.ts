@@ -83,4 +83,10 @@ export class PhotoEditorComponent implements OnInit {
       this.toastr.success('Main photo changed successfully!');
     });
   }
+
+  deletePhoto(photoId: number): void {
+    this.membersService.deletePhoto(photoId).subscribe(() => {
+      this.member.photos = this.member.photos.filter((p) => p.id !== photoId);
+    });
+  }
 }

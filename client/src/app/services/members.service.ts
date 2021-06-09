@@ -83,6 +83,13 @@ export class MembersService {
   }
 
   setMainPhoto(photoId: number): Observable<null> {
-    return this.http.put<null>(this.endpoint + '/set-main-photo/' + photoId, {});
+    return this.http.put<null>(
+      this.endpoint + '/set-main-photo/' + photoId,
+      {}
+    );
+  }
+
+  deletePhoto(photoId: number): Observable<null> {
+    return this.http.delete<null>(this.endpoint + '/delete-photo/' + photoId);
   }
 }
