@@ -14,6 +14,17 @@ namespace API.Extensions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
         {
+            /*
+                To get access to your cloudinary account, you will need the following settings in your appsettings.json:
+                    
+                    "CloudinarySettings": {
+                        "CloudName": "",
+                        "ApiKey": "",
+                        "ApiSecret": ""
+                    }
+            */
+            services.Configure<CloudinarySettings>(config.GetSection("CloudinarySettings"));
+
             // lifetime: how long should the service be alive for once it is created. 3 options:
             // 1. singleton: created once and lasts through he lifetime of the application, until application is shut down
             // 2. scoped: scoped to the lifetime of the http request - when a requests comes in and we have this service injected into that particular controller, 
@@ -25,6 +36,8 @@ namespace API.Extensions
             services.AddScoped<ITokenService, TokenService>();
 
             services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<IPhotoService, PhotoService>();
 
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly); // add Automapper and tell it where to find mapping profiles
 
