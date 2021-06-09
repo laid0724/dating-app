@@ -2,3 +2,12 @@
 .dropdown-item {
   cursor: pointer;
 }
+
+.avatar-img {
+  max-height: 50px;
+  min-height: 50px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  display: inline;
+  margin-right: 10px;
+}

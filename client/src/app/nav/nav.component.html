@@ -33,12 +33,17 @@
     </ul>
 
     <div class="dropdown" *ngIf="currentUser$ | async as user" dropdown>
-      <a class="dropdown-toggle text-light" dropdownToggle
-        >Welcome {{ user.userName | titlecase }}</a
+      <a class="dropdown-toggle text-light" dropdownToggle>
+        <img
+          [src]="user.photoUrl || './assets/user.png'"
+          [alt]="user.photoUrl || 'profile image thumbnail'"
+          class="avatar-img"
+        />
+        Welcome {{ user.userName | titlecase }}</a
       >
       <div class="dropdown-menu" *dropdownMenu>
-        <a class="dropdown-item" [routerLink]="['/member/edit']"
-          >Edit Profile</a
+        <a class="dropdown-item" [routerLink]="['/member/edit']">
+          Edit Profile</a
         >
         <div class="dropdown-divider"></div>
         <a class="dropdown-item" (click)="logout()">Logout</a>
@@ -64,7 +69,10 @@
       <input
         class="form-control mr-sm-2"
         [ngClass]="{
-          'is-invalid': controlHasError(form, 'password', ['required', 'minlength'])
+          'is-invalid': controlHasError(form, 'password', [
+            'required',
+            'minlength'
+          ])
         }"
         type="password"
         placeholder="Password"

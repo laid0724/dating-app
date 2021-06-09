@@ -22,6 +22,7 @@ export class AccountService {
   constructor(private http: HttpClient) {}
 
   setCurrentUser(user: User): void {
+    localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }
 
@@ -31,8 +32,7 @@ export class AccountService {
       .pipe(
         tap((user: User) => {
           if (user) {
-            localStorage.setItem('user', JSON.stringify(user));
-            this.currentUserSource.next(user);
+            this.setCurrentUser(user);
           }
         })
       );
@@ -42,8 +42,7 @@ export class AccountService {
     return this.http.post<User>(this.endpoint + '/login', userCredential).pipe(
       tap((user: User) => {
         if (user) {
-          localStorage.setItem('user', JSON.stringify(user));
-          this.currentUserSource.next(user);
+          this.setCurrentUser(user);
         }
       })
     );
@@ -53,4 +52,5 @@ export class AccountService {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
   }
+
 }
