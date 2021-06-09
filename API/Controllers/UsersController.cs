@@ -63,15 +63,7 @@ namespace API.Controllers
         [HttpPut]
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
-            /*
-                here, we are directly getting the username via Claims because we don't trust the user/client
-                to provide the correct one.
-
-                we can access something called Claims from an http request, where we can extract and read the current
-                user sending the request as a ClaimsPrincipal, to read more, see:
-                https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0
-            */
-            var user = await _userRepository.GetUserByUserNameAsync(User.GetUsername());
+            var user = await GetAppUser();
 
             _mapper.Map(memberUpdateDto, user);
 
@@ -86,7 +78,7 @@ namespace API.Controllers
         [HttpPost("add-photo")]
         public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
         {
-            var user = await _userRepository.GetUserByUserNameAsync(User.GetUsername());
+            var user = await GetAppUser();
             var result = await _photoService.AddPhotoAsync(file);
 
             if (result.Error != null)
@@ -119,13 +111,61 @@ namespace API.Controllers
 
                 */
                 return CreatedAtRoute(
-                    "GetUser", 
+                    "GetUser",
                     new { username = user.UserName },  // this supplies the route param with the username for this method
                     _mapper.Map<PhotoDto>(photo)
                 );
             }
 
             return BadRequest("Problem adding photo");
+        }
+
+        [Description("Set user's main photo")]
+        [HttpPut("set-main-photo/{photoId}")]
+        public async Task<ActionResult> SetMainPhoto(int photoId)
+        {
+            var user = await GetAppUser();
+            var photo = user.Photos.FirstOrDefault(e => e.Id == photoId);
+
+            if (photo == null)
+            {
+                return NotFound("Photo does not exist.");
+            }
+
+            if (photo.IsMain)
+            {
+                return BadRequest("This is already your main photo.");
+            }
+
+            var currentMain = user.Photos.FirstOrDefault(e => e.IsMain);
+
+            if (currentMain != null)
+            {
+                currentMain.IsMain = false;
+            }
+            photo.IsMain = true;
+
+            if (await _userRepository.SaveAllAsync())
+            {
+                return NoContent();
+            }
+
+            return BadRequest("Failed to set main photo");
+
+
+        }
+
+        public async Task<AppUser> GetAppUser()
+        {
+            /*
+                here, we are directly getting the username via Claims because we don't trust the user/client
+                to provide the correct one.
+
+                we can access something called Claims from an http request, where we can extract and read the current
+                user sending the request as a ClaimsPrincipal, to read more, see:
+                https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0
+            */
+            return await _userRepository.GetUserByUserNameAsync(User.GetUsername());
         }
     }
 }
