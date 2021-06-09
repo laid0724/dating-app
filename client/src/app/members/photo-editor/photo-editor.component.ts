@@ -1,9 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FileUploader } from 'ng2-file-upload';
+import { ToastrService } from 'ngx-toastr';
 import { take } from 'rxjs/operators';
 import { Member } from 'src/app/models/member';
+import { Photo } from 'src/app/models/photo';
 import { User } from 'src/app/models/users';
 import { AccountService } from 'src/app/services/account.service';
+import { MembersService } from 'src/app/services/members.service';
 import { environment } from 'src/environments/environment';
 
 // see: https://valor-software.com/ng2-file-upload/
@@ -21,7 +24,11 @@ export class PhotoEditorComponent implements OnInit {
   baseUrl = environment.apiUrl;
   user: User;
 
-  constructor(private accountService: AccountService) {
+  constructor(
+    private accountService: AccountService,
+    private membersService: MembersService,
+    private toastr: ToastrService
+  ) {
     this.accountService.currentUser$
       .pipe(take(1))
       .subscribe((user) => (this.user = user));
@@ -57,5 +64,23 @@ export class PhotoEditorComponent implements OnInit {
         this.member.photos.push(photo);
       }
     };
+  }
+
+  setMainPhoto(photo: Photo): void {
+    this.membersService.setMainPhoto(photo.id).subscribe(() => {
+      this.user.photoUrl = photo.url;
+      this.accountService.setCurrentUser(this.user);
+      this.member.photoUrl = photo.url;
+      this.member.photos.forEach((p) => {
+        if (p.isMain) {
+          p.isMain = false;
+        }
+        if (p.id === photo.id) {
+          p.isMain = true;
+        }
+      });
+
+      this.toastr.success('Main photo changed successfully!');
+    });
   }
 }

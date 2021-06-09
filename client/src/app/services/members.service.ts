@@ -81,4 +81,8 @@ export class MembersService {
       })
     );
   }
+
+  setMainPhoto(photoId: number): Observable<null> {
+    return this.http.put<null>(this.endpoint + '/set-main-photo/' + photoId, {});
+  }
 }

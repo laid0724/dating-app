@@ -1,8 +1,18 @@
 <div class="row my-3">
-  <div class="col-2" *ngFor="let photo of member.photos">
+  <div
+    class="col-2 d-flex justify-content-center align-items-center flex-column"
+    *ngFor="let photo of member.photos"
+  >
     <img [src]="photo.url" [alt]="photo.url" class="img-thumbnail p-1" />
-    <div class="text-center">
-      <button class="btn btn-sm">Main</button>
+    <div class="d-flex justify-content-center align-items-center">
+      <button
+        [disabled]="photo.isMain"
+        (click)="setMainPhoto(photo)"
+        [ngClass]="photo.isMain ? 'btn-success active' : 'btn-outline-success'"
+        class="btn btn-sm"
+      >
+        Main
+      </button>
       <button class="btn btn-sm btn-danger">
         <i class="fa fa-trash"></i>
       </button>
