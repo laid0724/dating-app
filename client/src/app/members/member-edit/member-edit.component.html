@@ -59,7 +59,7 @@
               formControlName="knownAs"
               class="form-control"
               [ngClass]="{
-                'is-invalid': controlHasError(form, 'knownAs', 'required')
+                'is-invalid': controlHasError(form, 'knownAs', ['required'])
               }"
             />
             <h4 class="mt-2">Description</h4>

@@ -5,6 +5,9 @@
     <input
       type="text"
       class="form-control"
+      [ngClass]="{
+        'is-invalid': controlHasError(form, 'password', ['required'])
+      }"
       formControlName="userName"
       placeholder="Username"
     />
@@ -13,6 +16,12 @@
     <input
       type="password"
       class="form-control"
+      [ngClass]="{
+        'is-invalid': controlHasError(form, 'password', [
+          'required',
+          'minlength'
+        ])
+      }"
       formControlName="password"
       placeholder="Password"
     />

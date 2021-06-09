@@ -54,13 +54,18 @@
     >
       <input
         class="form-control mr-sm-2"
-        [ngClass]
+        [ngClass]="{
+          'is-invalid': controlHasError(form, 'userName', ['required'])
+        }"
         type="text"
         placeholder="Username"
         formControlName="userName"
       />
       <input
         class="form-control mr-sm-2"
+        [ngClass]="{
+          'is-invalid': controlHasError(form, 'password', ['required', 'minlength'])
+        }"
         type="password"
         placeholder="Password"
         formControlName="password"

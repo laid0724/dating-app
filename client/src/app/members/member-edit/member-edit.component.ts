@@ -22,7 +22,7 @@ export class MemberEditComponent implements OnInit {
   controlHasError: (
     form: FormGroup,
     formControlName: string,
-    error: string
+    errors: string[]
   ) => boolean = controlHasError;
 
   // allows you to access browser events, in this case, binding to the leaving the page event (unload)
