@@ -4,6 +4,14 @@ A simple desktop-only dating app built with .NET Core 5, Angular 10 and Bootstra
 
 Built just for fun & practice.
 
+# Setup
+
+1. Get a cloudinary account, and update the fields in `CloudinarySettings` your `appsettings.json` with your credentials.
+2. `cd` to `API` and run `dotnet restore` and `dotnet ef database update`
+3. run `dotnet watch run` to spin up APIs
+4. `cd` to `client` and run `npm i`
+5. run `ng serve` to spin up angular project
+
 # Dotnet API
 
 `cd` to `API`
