@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
+using API.Extensions;
 
 namespace API.Controllers
 {
@@ -60,15 +62,14 @@ namespace API.Controllers
         public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
         {
             /*
-                here, we are directly getting the username via the token because we don't trust the user/client
+                here, we are directly getting the username via Claims because we don't trust the user/client
                 to provide the correct one.
 
                 we can access something called Claims from an http request, where we can extract and read the current
                 user sending the request as a ClaimsPrincipal, to read more, see:
                 https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0
             */
-            var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var user = await _userRepository.GetUserByUserNameAsync(username);
+            var user = await _userRepository.GetUserByUserNameAsync(User.GetUsername());
 
             _mapper.Map(memberUpdateDto, user);
 
