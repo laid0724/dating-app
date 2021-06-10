@@ -58,7 +58,7 @@ namespace API.Controllers
             // hash password and generate salt for hashed password so no users may have
             // the same hashed password even if passwords are identical.
             // note: each newly instantiated HMACSHA512 class generates a new random key
-            user.UserName = registerDto.UserName.ToLower(); // always use lowercase when storing emails & username!
+            user.UserName = registerDto.UserName.ToLower().Trim(); // always use lowercase when storing emails & username!
             user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
             user.PasswordSalt = hmac.Key;
 
