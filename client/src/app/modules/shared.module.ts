@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -12,6 +13,7 @@ const ngxBootstrapModules = [
   BsDropdownModule.forRoot(),
   TabsModule.forRoot(),
   BsDatepickerModule.forRoot(),
+  PaginationModule.forRoot(),
 ];
 
 @NgModule({
@@ -34,6 +36,7 @@ const ngxBootstrapModules = [
     NgxSpinnerModule,
     FileUploadModule,
     BsDatepickerModule,
+    PaginationModule,
   ],
 })
 export class SharedModule {}
