@@ -21,6 +21,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { LoadingInterceptor } from './interceptors/loading.interceptor';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
+import { TextInputComponent } from './form/text-input/text-input.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
     MemberCardComponent,
     MemberEditComponent,
     PhotoEditorComponent,
+    TextInputComponent,
   ],
   imports: [
     BrowserModule,
