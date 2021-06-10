@@ -1,7 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { controlHasError } from '../helpers';
 import { AccountService } from '../services/account.service';
 import { matchValuesValidator } from '../validators';
 
@@ -13,13 +12,7 @@ import { matchValuesValidator } from '../validators';
 export class RegisterComponent implements OnInit {
   @Output() cancelRegister = new EventEmitter<boolean>();
 
-  form: FormGroup;
-
-  controlHasError: (
-    form: FormGroup,
-    formControlName: string,
-    errors: string[]
-  ) => boolean = controlHasError;
+  registerForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
@@ -28,12 +21,17 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.form = this.buildForm();
+    this.registerForm = this.initRegisterForm();
   }
 
-  buildForm(): FormGroup {
+  initRegisterForm(): FormGroup {
     const formToBuild = this.fb.group({
+      gender: ['male'],
       userName: [null, Validators.required],
+      knownAs: [null, [Validators.required]],
+      dateOfBirth: [null, [Validators.required]],
+      city: [null, [Validators.required]],
+      country: [null, [Validators.required]],
       password: [
         null,
         [Validators.required, Validators.minLength(4), Validators.maxLength(8)],
@@ -52,17 +50,17 @@ export class RegisterComponent implements OnInit {
   }
 
   register(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       this.toastr.error(
         'Please make sure that all required fields are filled out.'
       );
       return;
     }
 
-    const { userName, password } = this.form.value;
+    const { confirmPassword, ...registerFormValue } = this.registerForm.value;
 
-    this.accountService.register({ userName, password }).subscribe((res) => {
+    this.accountService.register(registerFormValue).subscribe((res) => {
       this.cancel();
     });
   }

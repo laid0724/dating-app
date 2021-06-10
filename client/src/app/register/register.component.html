@@ -1,78 +1,55 @@
-<form [formGroup]="form" (ngSubmit)="register()" autocomplete="off">
+<form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
   <h2 class="text-center text-primary">Sign up</h2>
   <hr />
   <div class="form-group">
-    <input
-      type="text"
-      class="form-control"
-      [ngClass]="{
-        'is-invalid': controlHasError(form, 'userName', ['required'])
-      }"
-      formControlName="userName"
-      placeholder="Username"
-    />
-    <div class="invalid-feedback">Please enter a username</div>
-  </div>
-  <div class="form-group">
-    <input
-      type="password"
-      class="form-control"
-      [ngClass]="{
-        'is-invalid': controlHasError(form, 'password', [
-          'required',
-          'minlength',
-          'maxlength'
-        ])
-      }"
-      formControlName="password"
-      placeholder="Password"
-    />
-
-    <div
-      class="invalid-feedback"
-      *ngIf="controlHasError(form, 'password', ['required'])"
-    >
-      Please enter a password
+    <label class="control-label mr-3">I am a:</label>
+    <div class="form-check form-check-inline">
+      <input
+        class="form-check-input"
+        type="radio"
+        value="male"
+        formControlName="gender"
+      />
+      <label class="form-check-label">
+        Male </label>
     </div>
-    <div
-      class="invalid-feedback"
-      *ngIf="controlHasError(form, 'password', ['minlength'])"
-    >
-      Password must be at least 4 charcaters
-    </div>
-    <div
-      class="invalid-feedback"
-      *ngIf="controlHasError(form, 'password', ['maxlength'])"
-    >
-      Password must be at most 8 characters
+    <div class="form-check form-check-inline">
+      <input
+        class="form-check-input"
+        type="radio"
+        value="female"
+        formControlName="gender"
+      />
+      <label class="form-check-label"> Female </label>
     </div>
   </div>
-  <div class="form-group">
-    <input
-      type="password"
-      class="form-control"
-      [ngClass]="{
-        'is-invalid': controlHasError(form, 'confirmPassword', [
-          'required',
-          'isNotMatching'
-        ])
-      }"
-      formControlName="confirmPassword"
-      placeholder="Confirm Password"
-    />
-    <div
-      class="invalid-feedback"
-      *ngIf="controlHasError(form, 'confirmPassword', ['required'])"
-    >
-      Please confirm your password
-    </div>
-    <div
-      class="invalid-feedback"
-      *ngIf="controlHasError(form, 'confirmPassword', ['isNotMatching'])"
-    >
-      Confirm password must match password
-    </div>
-  </div>
+  <app-text-input
+    formControlName="userName"
+    [label]="'Username'"
+  ></app-text-input>
+  <app-text-input
+    formControlName="knownAs"
+    [label]="'Known As'"
+  ></app-text-input>
+  <app-text-input
+    formControlName="dateOfBirth"
+    [label]="'Date Of Birth'"
+  ></app-text-input>
+  <app-text-input formControlName="city" [label]="'City'"></app-text-input>
+  <app-text-input
+    formControlName="country"
+    [label]="'Country'"
+  ></app-text-input>
+  <app-text-input
+    formControlName="password"
+    [label]="'Password'"
+    [type]="'password'"
+  ></app-text-input>
+  <app-text-input
+    formControlName="confirmPassword"
+    [label]="'Confirm Password'"
+    [type]="'password'"
+  ></app-text-input>
   <div class="form-group text-center">
     <button type="submit" class="btn btn-success mr-2">Register</button>
     <button type="button" class="btn btn-default mr-2" (click)="cancel()">
