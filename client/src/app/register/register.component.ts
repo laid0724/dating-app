@@ -1,5 +1,6 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { AccountService } from '../services/account.service';
 import { matchValuesValidator } from '../validators';
@@ -14,11 +15,13 @@ export class RegisterComponent implements OnInit {
 
   registerForm: FormGroup;
   maxDate: Date;
+  validationErrors: string[] = [];
 
   constructor(
     private fb: FormBuilder,
     private accountService: AccountService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -65,8 +68,10 @@ export class RegisterComponent implements OnInit {
 
     const { confirmPassword, ...registerFormValue } = this.registerForm.value;
 
-    this.accountService.register(registerFormValue).subscribe((res) => {
-      this.cancel();
+    this.accountService.register(registerFormValue).subscribe((success) => {
+      this.router.navigateByUrl('/members');
+    }, (errors) => {
+      this.validationErrors = errors;
     });
   }
 

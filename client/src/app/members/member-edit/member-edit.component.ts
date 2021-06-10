@@ -53,7 +53,7 @@ export class MemberEditComponent implements OnInit {
 
   buildForm(): FormGroup {
     return this.fb.group({
-      knownAs: [null, Validators.required],
+      // knownAs: [null, Validators.required],
       introduction: [null],
       lookingFor: [null],
       interests: [null],
