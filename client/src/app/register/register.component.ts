@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { controlHasError } from '../helpers';
 import { AccountService } from '../services/account.service';
+import { matchValuesValidator } from '../validators';
 
 @Component({
   selector: 'app-register',
@@ -31,10 +32,23 @@ export class RegisterComponent implements OnInit {
   }
 
   buildForm(): FormGroup {
-    return this.fb.group({
+    const formToBuild = this.fb.group({
       userName: [null, Validators.required],
-      password: [null, [Validators.required, Validators.minLength(4)]],
+      password: [
+        null,
+        [Validators.required, Validators.minLength(4), Validators.maxLength(8)],
+      ],
+      confirmPassword: [
+        null,
+        [Validators.required, matchValuesValidator('password')],
+      ],
     });
+
+    formToBuild.get('password').valueChanges.subscribe((v) => {
+      formToBuild.get('confirmPassword').updateValueAndValidity();
+    });
+
+    return formToBuild;
   }
 
   register(): void {
@@ -46,7 +60,9 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
-    this.accountService.register(this.form.value).subscribe((res) => {
+    const { userName, password } = this.form.value;
+
+    this.accountService.register({ userName, password }).subscribe((res) => {
       this.cancel();
     });
   }

@@ -6,11 +6,12 @@
       type="text"
       class="form-control"
       [ngClass]="{
-        'is-invalid': controlHasError(form, 'password', ['required'])
+        'is-invalid': controlHasError(form, 'userName', ['required'])
       }"
       formControlName="userName"
       placeholder="Username"
     />
+    <div class="invalid-feedback">Please enter a username</div>
   </div>
   <div class="form-group">
     <input
@@ -19,12 +20,58 @@
       [ngClass]="{
         'is-invalid': controlHasError(form, 'password', [
           'required',
-          'minlength'
+          'minlength',
+          'maxlength'
         ])
       }"
       formControlName="password"
       placeholder="Password"
     />
+
+    <div
+      class="invalid-feedback"
+      *ngIf="controlHasError(form, 'password', ['required'])"
+    >
+      Please enter a password
+    </div>
+    <div
+      class="invalid-feedback"
+      *ngIf="controlHasError(form, 'password', ['minlength'])"
+    >
+      Password must be at least 4 charcaters
+    </div>
+    <div
+      class="invalid-feedback"
+      *ngIf="controlHasError(form, 'password', ['maxlength'])"
+    >
+      Password must be at most 8 characters
+    </div>
+  </div>
+  <div class="form-group">
+    <input
+      type="password"
+      class="form-control"
+      [ngClass]="{
+        'is-invalid': controlHasError(form, 'confirmPassword', [
+          'required',
+          'isNotMatching'
+        ])
+      }"
+      formControlName="confirmPassword"
+      placeholder="Confirm Password"
+    />
+    <div
+      class="invalid-feedback"
+      *ngIf="controlHasError(form, 'confirmPassword', ['required'])"
+    >
+      Please confirm your password
+    </div>
+    <div
+      class="invalid-feedback"
+      *ngIf="controlHasError(form, 'confirmPassword', ['isNotMatching'])"
+    >
+      Confirm password must match password
+    </div>
   </div>
   <div class="form-group text-center">
     <button type="submit" class="btn btn-success mr-2">Register</button>
