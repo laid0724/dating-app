@@ -9,18 +9,18 @@
     [placeholder]="label"
   />
 
-  <div class="invalid-feedback" *ngIf="control.errors?.required">
+  <div class="invalid-feedback" *ngIf="control.hasError('required')">
     Please enter a {{ label }}
   </div>
-  <div class="invalid-feedback" *ngIf="control.errors?.minlength">
+  <div class="invalid-feedback" *ngIf="control.hasError('minlength')">
     {{ label }} must be at least
     {{ control.errors?.minlength["requiredLength"] }} characters
   </div>
-  <div class="invalid-feedback" *ngIf="control.errors?.maxlength">
+  <div class="invalid-feedback" *ngIf="control.hasError('maxlength')">
     {{ label }} must be at most
     {{ control.errors?.maxlength["requiredLength"] }} characters
   </div>
-  <div class="invalid-feedback" *ngIf="control.errors?.isNotMatching">
+  <div class="invalid-feedback" *ngIf="control.hasError('isNotMatching')">
     Passwords do not match
   </div>
 </div>
