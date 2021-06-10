@@ -7,8 +7,10 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { getPaginatedResult, getPaginationHeaders } from '../helpers';
 import { Member } from '../models/member';
 import { PaginatedResult } from '../models/pagination';
+import { UserParams } from '../models/userParams';
 
 // const httpOptions = {
 //   headers: new HttpHeaders({
@@ -24,15 +26,11 @@ export class MembersService {
 
   // if we cache our results, we wont sent unnecessary http requests
   // and the loading screen wont be triggered
-  members: Member[] = [];
-  paginatedResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]>();
+  // members: Member[] = [];
 
   constructor(private http: HttpClient) {}
 
-  getMembers(
-    page?: number,
-    itemsPerPage?: number
-  ): Observable<PaginatedResult<Member[]>> {
+  getMembers(userParams: UserParams): Observable<PaginatedResult<Member[]>> {
     // a very rudimentary form of caching
     // doesn't work when entity is updated while you are using the app,
     // unless user refreshes page
@@ -41,39 +39,19 @@ export class MembersService {
     //   return of(this.members);
     // }
 
-    let params = new HttpParams();
-
-    if (page !== null && itemsPerPage != null) {
-      params = params.append('pageNumber', page.toString());
-      params = params.append('pageSize', itemsPerPage.toString());
-    }
-
-    return this.http
-      .get<Member[]>(this.endpoint, {
-        /*
-          Angular's http client by default will return the response's body,
-          changing this to 'response' will make httpclient return the whole thing,
-          along with the headers
-        */
-        observe: 'response',
-        params,
-      })
-      .pipe(
-        map((response: HttpResponse<Member[]>) => {
-          this.paginatedResult.result = response.body;
-          if (response.headers.get('Pagination') !== null) {
-            this.paginatedResult.pagination = JSON.parse(
-              response.headers.get('Pagination')
-            );
-          }
-          return this.paginatedResult;
-        })
-      );
-
     // return this.http.get<Member[]>(
     //   this.endpoint,
     //   // , httpOptions
     // ).pipe(tap((members) => (this.members = members)));
+
+    const { pageNumber, pageSize, minAge, maxAge, gender } = userParams;
+    let params = getPaginationHeaders(pageNumber, pageSize);
+
+    params = params.append('minAge', minAge.toString());
+    params = params.append('maxAge', maxAge.toString());
+    params = params.append('gender', gender);
+
+    return getPaginatedResult<Member[]>(this.http, this.endpoint, params);
   }
 
   getMember(username: string): Observable<Member> {
