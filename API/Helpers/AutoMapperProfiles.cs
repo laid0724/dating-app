@@ -28,6 +28,7 @@ namespace API.Helpers
 
             // reverse map from dto to entity model:
             CreateMap<MemberUpdateDto, AppUser>();
+            CreateMap<RegisterDto, AppUser>();
         }
     }
 }

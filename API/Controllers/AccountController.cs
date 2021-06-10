@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using API.DTOs;
 using API.Interfaces;
+using AutoMapper;
 
 namespace API.Controllers
 {
@@ -20,9 +21,11 @@ namespace API.Controllers
         private readonly DataContext _context;
         private readonly ILogger<AccountController> _logger;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AccountController(DataContext context, ILogger<AccountController> logger, ITokenService tokenService)
+        public AccountController(DataContext context, ILogger<AccountController> logger, ITokenService tokenService, IMapper mapper)
         {
+            _mapper = mapper;
             _tokenService = tokenService;
             _context = context;
             _logger = logger;
@@ -42,6 +45,9 @@ namespace API.Controllers
                 return BadRequest("Username is taken");
             }
 
+            // reverse map request to AppUser shape
+            var user = _mapper.Map<AppUser>(registerDto);
+
             /* 
                 when you use the 'using' keyword, C# will call the dispose() method inside
                 the class being initialized, which releases the resources being used by this class.
@@ -52,12 +58,9 @@ namespace API.Controllers
             // hash password and generate salt for hashed password so no users may have
             // the same hashed password even if passwords are identical.
             // note: each newly instantiated HMACSHA512 class generates a new random key
-            var user = new AppUser
-            {
-                UserName = registerDto.UserName.ToLower(), // always use lowercase when storing emails & username!
-                PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-                PasswordSalt = hmac.Key
-            };
+            user.UserName = registerDto.UserName.ToLower(); // always use lowercase when storing emails & username!
+            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+            user.PasswordSalt = hmac.Key;
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -65,7 +68,8 @@ namespace API.Controllers
             return Ok(new UserDto
             {
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                KnownAs = user.KnownAs,
             });
         }
 
@@ -115,7 +119,8 @@ namespace API.Controllers
             {
                 UserName = user.UserName,
                 Token = _tokenService.CreateToken(user),
-                PhotoUrl = user.Photos.FirstOrDefault(e => e.IsMain)?.Url
+                PhotoUrl = user.Photos.FirstOrDefault(e => e.IsMain)?.Url,
+                KnownAs = user.KnownAs,
             });
         }
 
