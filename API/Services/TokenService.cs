@@ -25,9 +25,11 @@ namespace API.Services
         // this method generates and return a JWT:
         public string CreateToken(AppUser user)
         {
+            // here, we're binding both the user's id and username to the token:
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.NameId, user.UserName)
+                new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()), // userId
+                new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName), // userName
             };
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
