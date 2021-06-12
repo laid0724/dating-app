@@ -17,6 +17,10 @@ export class MemberListComponent implements OnInit {
   pagination: Pagination;
   userParams: UserParams;
   user: User;
+  genderList = [
+    { value: 'male', display: 'Male' },
+    { value: 'female', display: 'Female' },
+  ];
 
   constructor(
     private membersService: MembersService,
@@ -42,5 +46,9 @@ export class MemberListComponent implements OnInit {
   onPageChanged(pageChangeEvent: { page: number; itemsPerPage: number }): void {
     this.userParams.pageNumber = pageChangeEvent.page;
     this.loadMembers();
+  }
+
+  resetFilters(): void {
+    this.userParams = new UserParams(this.user);
   }
 }
