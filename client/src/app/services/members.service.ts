@@ -44,12 +44,14 @@ export class MembersService {
     //   // , httpOptions
     // ).pipe(tap((members) => (this.members = members)));
 
-    const { pageNumber, pageSize, minAge, maxAge, gender } = userParams;
+    const { pageNumber, pageSize, minAge, maxAge, gender, orderBy } =
+      userParams;
     let params = getPaginationHeaders(pageNumber, pageSize);
 
     params = params.append('minAge', minAge.toString());
     params = params.append('maxAge', maxAge.toString());
     params = params.append('gender', gender);
+    params = params.append('orderBy', orderBy);
 
     return getPaginatedResult<Member[]>(this.http, this.endpoint, params);
   }

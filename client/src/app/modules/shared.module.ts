@@ -4,6 +4,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { NgxSpinnerModule } from 'ngx-spinner';
@@ -14,6 +15,15 @@ const ngxBootstrapModules = [
   TabsModule.forRoot(),
   BsDatepickerModule.forRoot(),
   PaginationModule.forRoot(),
+  ButtonsModule.forRoot(),
+];
+
+const exportedNgxBootstrapModules = [
+  BsDropdownModule,
+  TabsModule,
+  BsDatepickerModule,
+  PaginationModule,
+  ButtonsModule,
 ];
 
 @NgModule({
@@ -29,14 +39,11 @@ const ngxBootstrapModules = [
     FileUploadModule, // see: https://valor-software.com/ng2-file-upload/
   ],
   exports: [
-    BsDropdownModule,
+    ...exportedNgxBootstrapModules,
     ToastrModule,
-    TabsModule,
     NgxGalleryModule,
     NgxSpinnerModule,
     FileUploadModule,
-    BsDatepickerModule,
-    PaginationModule,
   ],
 })
 export class SharedModule {}
