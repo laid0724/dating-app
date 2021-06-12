@@ -9,6 +9,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
+import { TimeagoModule } from "ngx-timeago";
 
 const ngxBootstrapModules = [
   BsDropdownModule.forRoot(),
@@ -36,7 +37,8 @@ const exportedNgxBootstrapModules = [
     }),
     NgxGalleryModule, // see: https://github.com/kolkov/ngx-gallery
     NgxSpinnerModule, // see: https://github.com/Napster2210/ngx-spinner
-    FileUploadModule, // see: https://valor-software.com/ng2-file-upload/
+    FileUploadModule, // see: https://valor-software.com/ng2-file-upload/,
+    TimeagoModule.forRoot(), // see: https://github.com/ihym/ngx-timeago#readme
   ],
   exports: [
     ...exportedNgxBootstrapModules,
@@ -44,6 +46,7 @@ const exportedNgxBootstrapModules = [
     NgxGalleryModule,
     NgxSpinnerModule,
     FileUploadModule,
+    TimeagoModule
   ],
 })
 export class SharedModule {}
