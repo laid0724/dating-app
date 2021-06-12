@@ -46,11 +46,17 @@ export class ErrorInterceptor implements HttpInterceptor {
                 }
                 throw modalStateErrors.flat(Infinity);
               } else {
-                this.toastr.error(error.statusText, error.status.toString());
+                this.toastr.error(
+                  error.error,
+                  `${error.status.toString()} ${error.statusText}`
+                );
               }
               break;
             case 401: // Unauthorized
-              this.toastr.error(error.statusText, error.status.toString());
+              this.toastr.error(
+                error.error,
+                `${error.status.toString()} ${error.statusText}`
+              );
               break;
             case 404: // Not Found
               // NOTE: be careful with this - your APIs cannot throw 404 unless it really is a case of 404.
