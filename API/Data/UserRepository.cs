@@ -61,6 +61,13 @@ namespace API.Data
 
             query = query.Where(e => e.DateOfBirth >= minDob && e.DateOfBirth <= maxDob);
 
+            // new switch syntax in C# 8, _ is default case
+            query = userParams.OrderBy switch
+            {
+                "created" => query.OrderByDescending(e => e.Created),
+                _ => query.OrderByDescending(e => e.LastActive)
+            };
+
             return await PagedList<MemberDto>.CreateAsync(
                 query
                     .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
