@@ -15,8 +15,11 @@
         </button>
       </li>
       <li class="list-inline-item">
-        <button class="btn btn-sm btn-primary">
-          <i class="fa fa-heart"></i>
+        <button
+          class="btn btn-sm btn-primary"
+          (click)="isLikedByUser ? unlike(member) : addLike(member)"
+        >
+          <i class="fa fa-heart" [ngClass]="{ liked: isLikedByUser }"></i>
         </button>
       </li>
       <li class="list-inline-item">

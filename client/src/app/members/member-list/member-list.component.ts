@@ -1,8 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { startWith, switchMap, takeUntil } from 'rxjs/operators';
+import { Like } from 'src/app/models/like';
 import { Member } from 'src/app/models/member';
 import { Pagination } from 'src/app/models/pagination';
 import { UserParams } from 'src/app/models/userParams';
 import { User } from 'src/app/models/users';
+import { LikesService } from 'src/app/services/likes.service';
 import { MembersService } from 'src/app/services/members.service';
 
 @Component({
@@ -10,8 +14,9 @@ import { MembersService } from 'src/app/services/members.service';
   templateUrl: './member-list.component.html',
   styleUrls: ['./member-list.component.scss'],
 })
-export class MemberListComponent implements OnInit {
+export class MemberListComponent implements OnInit, OnDestroy {
   members: Member[];
+  likes: Like[];
   pagination: Pagination;
   userParams: UserParams;
   user: User;
@@ -20,12 +25,19 @@ export class MemberListComponent implements OnInit {
     { value: 'female', display: 'Female' },
   ];
 
-  constructor(private membersService: MembersService) {
+  likesRefresher$ = new Subject<any>();
+  destroyer$ = new Subject<boolean>();
+
+  constructor(
+    private membersService: MembersService,
+    private likesService: LikesService
+  ) {
     this.userParams = this.membersService.userParams;
   }
 
   ngOnInit(): void {
     this.loadMembers();
+    this.loadLikes();
   }
 
   loadMembers(): void {
@@ -36,6 +48,20 @@ export class MemberListComponent implements OnInit {
     });
   }
 
+  refreshLikes(event: any): void {
+    this.likesRefresher$.next(event);
+  }
+
+  loadLikes(): void {
+    this.likesRefresher$
+      .pipe(
+        startWith(null),
+        switchMap(() => this.likesService.getLikes('liked')),
+        takeUntil(this.destroyer$)
+      )
+      .subscribe((likes: Like[]) => (this.likes = likes));
+  }
+
   onPageChanged(pageChangeEvent: { page: number; itemsPerPage: number }): void {
     this.userParams.pageNumber = pageChangeEvent.page;
     this.membersService.userParams = this.userParams;
@@ -44,5 +70,10 @@ export class MemberListComponent implements OnInit {
 
   resetFilters(): void {
     this.userParams = this.membersService.resetUserParams();
+  }
+
+  ngOnDestroy(): void {
+    this.destroyer$.next(true);
+    this.destroyer$.unsubscribe();
   }
 }
