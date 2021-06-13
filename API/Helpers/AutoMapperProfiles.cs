@@ -25,6 +25,18 @@ namespace API.Helpers
                     opt => opt.MapFrom(src => src.DateOfBirth.CalculateAge())
                 );
             CreateMap<Photo, PhotoDto>();
+            CreateMap<Message, MessageDto>()
+                .ForMember(
+                    dest => dest.SenderPhotoUrl,
+                    opt => opt.MapFrom(
+                        src => src.Sender.Photos.FirstOrDefault(e => e.IsMain).Url
+                    )
+                ).ForMember(
+                    dest => dest.RecipientPhotoUrl,
+                    opt => opt.MapFrom(
+                        src => src.Recipient.Photos.FirstOrDefault(e => e.IsMain).Url
+                    )
+                );
 
             // reverse map from dto to entity model:
             CreateMap<MemberUpdateDto, AppUser>();
