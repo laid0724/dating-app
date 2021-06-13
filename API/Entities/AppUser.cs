@@ -24,6 +24,8 @@ namespace API.Entities
         public ICollection<Photo> Photos { get; set; } // ICollection is for one to many relationships
         public ICollection<UserLike> LikedByUsers { get; set; } 
         public ICollection<UserLike> LikedUsers { get; set; } 
+        public ICollection<Message> MessagesSent { get; set; } 
+        public ICollection<Message> MessagesReceived { get; set; } 
 
 
         // public int GetAge()
