@@ -15,7 +15,7 @@ export class MemberCardComponent {
   @Output() refreshLikes = new EventEmitter<null>();
 
   get isLikedByUser(): boolean {
-    return !!this.likes.find((like) => like.userName === this.member.userName);
+    return !!this.likes?.find((like) => like.userName === this.member.userName);
   }
 
   constructor(

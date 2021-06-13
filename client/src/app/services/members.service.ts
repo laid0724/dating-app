@@ -45,10 +45,13 @@ export class MembersService {
     private http: HttpClient,
     private accountService: AccountService
   ) {
-    accountService.currentUser$.pipe(take(1)).subscribe((user) => {
-      this.user = user;
-      this.userParams = new UserParams(user);
-    });
+    accountService.currentUser$
+      // do not use take(1) here because it will not work when user logout and login as another, as observable is complete.
+      // .pipe(take(1))
+      .subscribe((user) => {
+        this.user = user;
+        this.userParams = new UserParams(user);
+      });
   }
 
   resetUserParams(): UserParams {

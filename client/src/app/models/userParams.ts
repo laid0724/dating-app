@@ -10,6 +10,6 @@ export class UserParams implements PagedRequest {
   orderBy: 'created' | 'lastActive' = 'lastActive';
 
   constructor(user: User) {
-    this.gender = user.gender === 'male' ? 'female' : 'male';
+    this.gender = user?.gender === 'male' ? 'female' : 'male';
   }
 }
