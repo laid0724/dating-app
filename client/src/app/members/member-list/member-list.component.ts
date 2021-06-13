@@ -56,7 +56,7 @@ export class MemberListComponent implements OnInit, OnDestroy {
     this.likesRefresher$
       .pipe(
         startWith(null),
-        switchMap(() => this.likesService.getLikes('liked')),
+        switchMap(() => this.likesService.getAllLikes('liked')),
         takeUntil(this.destroyer$)
       )
       .subscribe((likes: Like[]) => (this.likes = likes));

@@ -3,6 +3,7 @@ import { combineLatest, of, Subject } from 'rxjs';
 import { startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { Like } from '../models/like';
 import { Member } from '../models/member';
+import { PaginatedResult, Pagination } from '../models/pagination';
 import { GetLikePredicate, LikesService } from '../services/likes.service';
 
 @Component({
@@ -15,6 +16,10 @@ export class ListsComponent implements OnInit, OnDestroy {
   likes: Like[];
   predicate: GetLikePredicate = 'liked';
 
+  pageNumber = 1;
+  pageSize = 6;
+  pagination: Pagination;
+
   likesRefresher$ = new Subject<GetLikePredicate>();
   destroyer$ = new Subject<boolean>();
 
@@ -24,7 +29,11 @@ export class ListsComponent implements OnInit, OnDestroy {
     this.loadLikes();
   }
 
-  refreshLikes(predicate: GetLikePredicate): void {
+  refreshLikes(predicate: GetLikePredicate, resetPage?: boolean): void {
+    if (resetPage) {
+      this.pageNumber = 1;
+      this.pagination.currentPage = 1;
+    }
     this.likesRefresher$.next(predicate);
   }
 
@@ -35,23 +44,40 @@ export class ListsComponent implements OnInit, OnDestroy {
         switchMap((predicate: GetLikePredicate) =>
           combineLatest([
             of(predicate),
-            this.likesService.getLikes('liked'),
-            this.likesService.getLikes('likedBy'),
+            this.likesService.getAllLikes('liked'),
+            this.likesService.getLikes('liked', this.pageNumber, this.pageSize),
+            this.likesService.getLikes(
+              'likedBy',
+              this.pageNumber,
+              this.pageSize
+            ),
           ])
         ),
         takeUntil(this.destroyer$)
       )
       .subscribe(
-        ([predicate, likes, likedBy]: [GetLikePredicate, Like[], Like[]]) => {
+        ([predicate, allLikes, pagedLikes, pagedLikedBy]: [
+          GetLikePredicate,
+          Like[],
+          PaginatedResult<Like[]>,
+          PaginatedResult<Like[]>
+        ]) => {
           if (predicate === 'liked') {
-            this.members = likes as Partial<Member[]>;
+            this.members = pagedLikes.result as Partial<Member[]>;
+            this.pagination = pagedLikes.pagination;
           }
           if (predicate === 'likedBy') {
-            this.members = likedBy as Partial<Member[]>;
+            this.members = pagedLikedBy.result as Partial<Member[]>;
+            this.pagination = pagedLikedBy.pagination;
           }
-          this.likes = likes;
+          this.likes = allLikes;
         }
       );
+  }
+
+  onPageChanged(pageChangeEvent: { page: number; itemsPerPage: number }): void {
+    this.pageNumber = pageChangeEvent.page;
+    this.refreshLikes(this.predicate);
   }
 
   ngOnDestroy(): void {
