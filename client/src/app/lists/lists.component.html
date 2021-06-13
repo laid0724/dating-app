@@ -25,6 +25,12 @@
       </button>
     </div>
     <div class="row mt-3">
+      <ng-container *ngIf="members?.length < 1">
+        <div class="col-12 text-center py-5">
+          <h3>No likes here :(</h3>
+        </div>
+      </ng-container>
+
       <div class="col-2" *ngFor="let member of members">
         <app-member-card
           [member]="member"
@@ -36,7 +42,10 @@
   </div>
 </div>
 
-<div class="d-flex justify-content-center" *ngIf="pagination">
+<div
+  class="d-flex justify-content-center"
+  *ngIf="pagination && members?.length > 0"
+>
   <pagination
     [boundaryLinks]="true"
     [totalItems]="pagination.totalItems"
