@@ -13,21 +13,24 @@ using Microsoft.Extensions.Logging;
 using API.DTOs;
 using API.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Controllers
 {
     public class AccountController : BaseApiController
     {
-        private readonly DataContext _context;
         private readonly ILogger<AccountController> _logger;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public AccountController(DataContext context, ILogger<AccountController> logger, ITokenService tokenService, IMapper mapper)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ILogger<AccountController> logger, ITokenService tokenService, IMapper mapper)
         {
+            _signInManager = signInManager;
+            _userManager = userManager;
             _mapper = mapper;
             _tokenService = tokenService;
-            _context = context;
             _logger = logger;
         }
 
@@ -62,8 +65,17 @@ namespace API.Controllers
             // user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
             // user.PasswordSalt = hmac.Key;
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            // _context.Users.Add(user);
+            // await _context.SaveChangesAsync();
+
+            /*
+                when using identity user manager:
+                - pw hashing and salting comes out of the box when creating users
+                - saving to db is done after creation, dont need to call save changes from db context
+            */
+            var result = await _userManager.CreateAsync(user, registerDto.Password);
+
+            if (!result.Succeeded) return BadRequest(result.Errors);
 
             return Ok(new UserDto
             {
@@ -91,7 +103,7 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
         {
-            var user = await _context.Users
+            var user = await _userManager.Users
                 .Include(e => e.Photos)
                 .SingleOrDefaultAsync(user => user.UserName.ToLower() == loginDto.UserName.ToLower());
 
@@ -116,6 +128,14 @@ namespace API.Controllers
             //     }
             // }
 
+            /* 
+                we no longer need to manually use key to decrypt salted and hashed pw when
+                using identity's sign in manager, it does all that for you.
+            */
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
+
+            if (!result.Succeeded) return Unauthorized();
+
             return Ok(new UserDto
             {
                 UserName = user.UserName,
@@ -128,7 +148,7 @@ namespace API.Controllers
 
         private async Task<bool> UserExists(string userName)
         {
-            return await _context.Users.AnyAsync(e => e.UserName == userName.ToLower());
+            return await _userManager.Users.AnyAsync(e => e.UserName == userName.ToLower());
         }
     }
 }
