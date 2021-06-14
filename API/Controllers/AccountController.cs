@@ -53,14 +53,14 @@ namespace API.Controllers
                 the class being initialized, which releases the resources being used by this class.
                 this is only available to classes that inherits from the IDisposable interface.
             */
-            using var hmac = new HMACSHA512();
+            // using var hmac = new HMACSHA512();
 
             // hash password and generate salt for hashed password so no users may have
             // the same hashed password even if passwords are identical.
             // note: each newly instantiated HMACSHA512 class generates a new random key
             user.UserName = registerDto.UserName.ToLower().Trim(); // always use lowercase when storing emails & username!
-            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
-            user.PasswordSalt = hmac.Key;
+            // user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+            // user.PasswordSalt = hmac.Key;
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -104,17 +104,17 @@ namespace API.Controllers
             // HMACSHA512 class takes an overload of a key that is generated via this class
             // we are using the user's salt value as a key to hash the password that is being sent in via
             // the loginDto object. 
-            using var hmac = new HMACSHA512(user.PasswordSalt);
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
+            // using var hmac = new HMACSHA512(user.PasswordSalt);
+            // var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
 
             // if the hashed value is identical to the db user's PasswordHash, then it is the correct password.
-            for (int i = 0; i < computedHash.Length; i++)
-            {
-                if (computedHash[i] != user.PasswordHash[i])
-                {
-                    return Unauthorized("Invalid username or password.");
-                }
-            }
+            // for (int i = 0; i < computedHash.Length; i++)
+            // {
+            //     if (computedHash[i] != user.PasswordHash[i])
+            //     {
+            //         return Unauthorized("Invalid username or password.");
+            //     }
+            // }
 
             return Ok(new UserDto
             {
