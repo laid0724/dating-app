@@ -9,12 +9,26 @@ namespace API.Data
 {
     public class Seed
     {
-        public static async Task SeedUsers(UserManager<AppUser> userManager)
+        public static async Task SeedUsers(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager)
         {
             if (await userManager.Users.AnyAsync()) return;
 
             var userData = await System.IO.File.ReadAllTextAsync("Data/UserSeedData.json"); // read seed data
             var users = JsonSerializer.Deserialize<List<AppUser>>(userData); // converts the json to c# objects
+
+            if (users == null) return;
+
+            var roles = new List<AppRole>
+            {
+                new AppRole{Name = "Admin"},
+                new AppRole{Name = "Moderator"},
+                new AppRole{Name = "Member"},
+            };
+
+            foreach (var role in roles)
+            {
+                await roleManager.CreateAsync(role);
+            }
 
             // these users still need passwords, so we generate them all as '1234' here (DEV ONLY!):
             foreach (var user in users)
@@ -33,8 +47,18 @@ namespace API.Data
                     - create and save to db automatically
                 */
                 await userManager.CreateAsync(user, "1234");
+                await userManager.AddToRoleAsync(user, "Member");
             }
             // await context.SaveChangesAsync();
+
+            var admin = new AppUser
+            {
+                UserName = "admin"
+            };
+
+            // dev only pw!!
+            await userManager.CreateAsync(admin, "1234");
+            await userManager.AddToRolesAsync(admin, new[] { "Admin", "Moderator" });
         }
     }
 }

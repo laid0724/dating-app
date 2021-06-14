@@ -34,13 +34,14 @@ namespace API
             {
                 var context = services.GetRequiredService<DataContext>();
                 var userManager = services.GetRequiredService<UserManager<AppUser>>();
+                var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
 
                 // this will automatically run dotnet ef database update
                 await context.Database.MigrateAsync();
 
                 // run all seeders here:
                 // await Seed.SeedUsers(context);
-                await Seed.SeedUsers(userManager);
+                await Seed.SeedUsers(userManager, roleManager);
             }
             catch(Exception ex)
             {
