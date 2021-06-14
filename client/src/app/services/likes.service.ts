@@ -34,7 +34,7 @@ export class LikesService {
 
     params = params.append('predicate', predicate);
 
-    return getPaginatedResult(this.http, this.endpoint, params);
+    return getPaginatedResult<Like[]>(this.http, this.endpoint, params);
   }
 
   unlike(username: string): Observable<null> {

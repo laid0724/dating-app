@@ -23,7 +23,11 @@
         </button>
       </li>
       <li class="list-inline-item">
-        <button class="btn btn-sm btn-primary">
+        <button
+          class="btn btn-sm btn-primary"
+          [routerLink]="['/members', member.userName]"
+          [queryParams]="{ tab: 3 }"
+        >
           <i class="fa fa-envelope"></i>
         </button>
       </li>

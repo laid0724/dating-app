@@ -1,61 +1,77 @@
-<ng-container *ngIf="member">
-  <div class="row">
-    <div class="col-4">
-      <div class="card">
-        <img
-          class="card-img img-thumbnail"
-          [src]="member.photoUrl || './assets/user.png'"
-          [alt]="member.knownAs"
-        />
-        <div class="card-body">
-          <div>
-            <strong>Location</strong>
-            <p>{{ member.city }}, {{ member.country }}</p>
-          </div>
-          <div>
-            <strong>Age</strong>
-            <p>{{ member.age }}</p>
-          </div>
-          <div>
-            <strong>Last Active</strong>
-            <p>{{ member.lastActive | timeago }}</p>
-          </div>
-          <div>
-            <strong>Member Since</strong>
-            <p>{{ member.created | date: "dd MMM yyyy" }}</p>
-          </div>
+<div class="row">
+  <div class="col-4">
+    <div class="card">
+      <img
+        class="card-img img-thumbnail"
+        [src]="member.photoUrl || './assets/user.png'"
+        [alt]="member.knownAs"
+      />
+      <div class="card-body">
+        <div>
+          <strong>Location</strong>
+          <p>{{ member.city }}, {{ member.country }}</p>
         </div>
-        <div class="card-footer">
-          <div class="btn-group d-flex">
-            <button class="btn btn-primary">Like</button>
-            <button class="btn btn-success">Message</button>
-          </div>
+        <div>
+          <strong>Age</strong>
+          <p>{{ member.age }}</p>
+        </div>
+        <div>
+          <strong>Last Active</strong>
+          <p>{{ member.lastActive | timeago }}</p>
+        </div>
+        <div>
+          <strong>Member Since</strong>
+          <p>{{ member.created | date: "dd MMM yyyy" }}</p>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="btn-group d-flex">
+          <button
+            class="btn btn-primary"
+            (click)="isLikedByUser ? unlike(member) : addLike(member)"
+          >
+            <i
+              class="fa fa-heart mr-1"
+              [ngClass]="{ liked: isLikedByUser }"
+            ></i>
+            Like
+          </button>
+          <button class="btn btn-success" (click)="selectTab(3)">
+            <i class="fa fa-paper-plane mr-1"></i>
+            Message
+          </button>
         </div>
       </div>
     </div>
-    <div class="col-8">
-      <tabset class="member-tabset">
-        <tab heading="About {{ member.knownAs | titlecase }}">
-          <h4>Description</h4>
-          <p>{{ member.introduction }}</p>
-          <h4>Looking for</h4>
-          <p>{{ member.lookingFor }}</p>
-        </tab>
-        <tab heading="Interests">
-          <h4>Interests</h4>
-          <p>{{ member.interests }}</p>
-        </tab>
-        <tab heading="Photos">
-          <ngx-gallery
-            [options]="galleryOptions"
-            [images]="galleryImages"
-            class="ngx-gallery"
-          ></ngx-gallery>
-        </tab>
-        <tab heading="Messages">
-          <p>Messages will go here</p>
-        </tab>
-      </tabset>
-    </div>
   </div>
-</ng-container>
+  <div class="col-8">
+    <tabset class="member-tabset" #memberTabs>
+      <tab
+        (selectTab)="onTabActivated($event)"
+        heading="About {{ member.knownAs | titlecase }}"
+      >
+        <h4>Description</h4>
+        <p>{{ member.introduction }}</p>
+        <h4>Looking for</h4>
+        <p>{{ member.lookingFor }}</p>
+      </tab>
+      <tab (selectTab)="onTabActivated($event)" heading="Interests">
+        <h4>Interests</h4>
+        <p>{{ member.interests }}</p>
+      </tab>
+      <tab (selectTab)="onTabActivated($event)" heading="Photos">
+        <ngx-gallery
+          [options]="galleryOptions"
+          [images]="galleryImages"
+          class="ngx-gallery"
+        ></ngx-gallery>
+      </tab>
+      <tab (selectTab)="onTabActivated($event)" heading="Messages">
+        <app-member-messages
+          [messages]="messages"
+          [username]="member.userName"
+        ></app-member-messages>
+      </tab>
+    </tabset>
+  </div>
+</div>
