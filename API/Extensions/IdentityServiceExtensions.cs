@@ -19,7 +19,12 @@ namespace API.Extensions
             // register all services from aspnetcore identity core
             services.AddIdentityCore<AppUser>(opt => 
             {
+                // turn these back to default or set them to more secure, this is for dev only!
                 opt.Password.RequireNonAlphanumeric = false;
+                opt.Password.RequiredLength = 4;
+                opt.Password.RequireLowercase = false;
+                opt.Password.RequireUppercase = false;
+                opt.Password.RequireDigit = false;
             })
                 .AddRoles<AppRole>()
                 .AddRoleManager<RoleManager<AppRole>>()
