@@ -56,6 +56,15 @@ export class MessagesComponent implements OnInit, OnDestroy {
       });
   }
 
+  deleteMessage(id: number): void {
+    this.messageService.deleteMessage(id).subscribe(() => {
+      this.messages.splice(
+        this.messages.findIndex((m) => m.id === id),
+        1
+      );
+    });
+  }
+
   onPageChanged(pageChangeEvent: { page: number; itemsPerPage: number }): void {
     this.pageNumber = pageChangeEvent.page;
     this.refreshMessages(this.container);

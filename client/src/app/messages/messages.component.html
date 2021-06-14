@@ -51,9 +51,9 @@
         [routerLink]="[
           container === 'Outbox'
             ? '/members/' + message.recipientUserName
-            : '/members' + message.senderUserName
+            : '/members/' + message.senderUserName
         ]"
-        [queryParams]="{tab: 3}"
+        [queryParams]="{ tab: 3 }"
       >
         <td style="width: 40%">{{ message.content }}</td>
         <td style="width: 20%">
@@ -76,7 +76,15 @@
         </td>
         <td style="width: 20%">{{ message.messageSent | timeago }}</td>
         <td style="width: 20%">
-          <button class="btn btn-danger" type="button">Delete</button>
+          <button
+            class="btn btn-outline-danger"
+            type="button"
+            (click)="deleteMessage(message.id)"
+            (click)="$event.stopPropagation()"
+          >
+            <!-- stop propagation will prevent the router event -->
+            Delete
+          </button>
         </td>
       </tr>
     </table>

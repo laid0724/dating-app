@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { getPaginatedResult, getPaginationHeaders } from '../helpers';
@@ -36,5 +36,9 @@ export class MessageService {
       recipientUserName,
       content,
     });
+  }
+
+  deleteMessage(id: number): Observable<null> {
+    return this.http.delete<null>(this.endpoint + `/${id}`);
   }
 }
