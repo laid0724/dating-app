@@ -47,7 +47,7 @@
           [alt]="user.photoUrl || 'profile image thumbnail'"
           class="avatar-img"
         />
-        Welcome {{ user.knownAs | titlecase }}</a
+        Welcome {{ user.knownAs || user.userName | titlecase }}</a
       >
       <div class="dropdown-menu" *dropdownMenu>
         <a class="dropdown-item" [routerLink]="['/member/edit']">
