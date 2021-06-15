@@ -26,7 +26,7 @@ namespace API.Controllers
 
         [Description("get users with roles")]
         [Authorize(Policy = "RequireAdminRole")]
-        [HttpGet("uses-with-roles")]
+        [HttpGet("users-with-roles")]
         public async Task<ActionResult> GetUsersWithRoles()
         {
             var users = await _userManager.Users
@@ -45,7 +45,7 @@ namespace API.Controllers
         }
 
         [Description("edit user roles")]
-        [HttpPost("edit-roles/{usenamr}")]
+        [HttpPost("edit-roles/{usename}")]
         public async Task<ActionResult<IEnumerable<string>>> EditRoles(string username, [FromQuery] string roles)
         {
             var selectedRoles = roles.Split(",").ToArray();
