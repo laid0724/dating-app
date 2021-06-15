@@ -44,6 +44,27 @@ namespace API.Controllers
             return Ok(users);
         }
 
+        [Description("edit user roles")]
+        [HttpPost("edit-roles/{usenamr}")]
+        public async Task<ActionResult<IEnumerable<string>>> EditRoles(string username, [FromQuery] string roles)
+        {
+            var selectedRoles = roles.Split(",").ToArray();
+
+            var user = await _userManager.FindByNameAsync(username);
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var result = await _userManager.AddToRolesAsync(user, selectedRoles.Except(userRoles));
+
+            if (!result.Succeeded) return BadRequest("Failed to add to roles");
+
+            result = await _userManager.RemoveFromRolesAsync(user, userRoles.Except(selectedRoles));
+
+            if (!result.Succeeded) return BadRequest("Failed to remove roles");
+
+            return Ok(await _userManager.GetRolesAsync(user));
+        }
+
         [Description("get photos for moderation")]
         [Authorize(Policy = "ModeratePhotoRole")]
         [HttpGet("photos-to-moderate")]
