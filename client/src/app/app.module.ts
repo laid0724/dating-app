@@ -27,6 +27,8 @@ import { MemberMessagesComponent } from './members/member-messages/member-messag
 import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { HasRoleDirective } from './directives/has-role.directive';
 import { UserManagementComponent } from './admin/user-management/user-management.component';
+import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
+import { SpacedCommaPipe } from './pipes/spaced-comma.pipe';
 
 @NgModule({
   declarations: [
@@ -49,6 +51,8 @@ import { UserManagementComponent } from './admin/user-management/user-management
     AdminPanelComponent,
     HasRoleDirective,
     UserManagementComponent,
+    RolesModalComponent,
+    SpacedCommaPipe,
   ],
   imports: [
     BrowserModule,

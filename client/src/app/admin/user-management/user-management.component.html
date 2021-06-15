@@ -8,9 +8,11 @@
       </tr>
       <tr *ngFor="let user of users">
         <td>{{ user.userName }}</td>
-        <td>{{ user.roles }}</td>
+        <td>{{ user.roles.toString() | spacedComma }}</td>
         <td>
-          <button class="btn btn-outline-info">Edit Roles</button>
+          <button class="btn btn-outline-info" (click)="openRolesModal(user)">
+            Edit Roles
+          </button>
         </td>
       </tr>
     </table>
