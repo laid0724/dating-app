@@ -23,6 +23,7 @@ namespace API.Controllers
     // ALL methods in this controller will need JWT token to be able to call this API
     // add "Authorization: Bearer <JWT token string>" in headers as key:value pair
     [Authorize]
+    // [Authorize(Roles = "Admin")] // this denotes that only user with a role of admin can access this api/method
     public class UsersController : BaseApiController
     {
         private readonly IUserRepository _userRepository;
