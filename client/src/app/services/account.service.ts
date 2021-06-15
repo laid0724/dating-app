@@ -4,9 +4,18 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { User } from '../models/users';
 
-export interface UserCredential {
+interface UserCredential {
   userName: string;
   password: string;
+}
+
+interface JwtToken {
+  nameid: string;
+  unique_name: string;
+  role: string | string[];
+  nbf: number;
+  exp: number;
+  iat: number;
 }
 
 @Injectable({
@@ -22,6 +31,12 @@ export class AccountService {
   constructor(private http: HttpClient) {}
 
   setCurrentUser(user: User): void {
+    if (user !== null) {
+      user.roles = [];
+      const roles = this.getDecodedToken(user.token).role;
+      Array.isArray(roles) ? (user.roles = roles) : user.roles.push(roles);
+    }
+
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);
   }
@@ -53,4 +68,9 @@ export class AccountService {
     this.currentUserSource.next(null);
   }
 
+  getDecodedToken(token: string): JwtToken {
+    // atob is a method that allows us to decrypt the parts of a JWT token that does not require a signature
+    // [1] refers to the payload property inside a JWT token
+    return JSON.parse(atob(token.split('.')[1]));
+  }
 }

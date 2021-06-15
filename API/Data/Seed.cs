@@ -53,7 +53,8 @@ namespace API.Data
 
             var admin = new AppUser
             {
-                UserName = "admin"
+                UserName = "admin",
+                KnownAs = "Admin"
             };
 
             // dev only pw!!
