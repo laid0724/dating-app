@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User } from '../models/users';
+import { Role, User } from '../models/users';
 
 @Injectable({
   providedIn: 'root',
@@ -13,5 +13,11 @@ export class AdminService {
 
   getUserWithRoles(): Observable<Partial<User[]>> {
     return this.http.get<Partial<User[]>>(this.endpoint + '/users-with-roles');
+  }
+
+  updateUserRoles(username: string, roles: Role[]): Observable<Role[]> {
+    return this.http.post<Role[]>(this.endpoint + `/edit-roles/${username}`, {
+      params: { roles },
+    });
   }
 }

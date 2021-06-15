@@ -45,6 +45,7 @@ namespace API.Controllers
         }
 
         [Description("edit user roles")]
+        [Authorize(Policy = "RequireAdminRole")]
         [HttpPost("edit-roles/{usename}")]
         public async Task<ActionResult<IEnumerable<string>>> EditRoles(string username, [FromQuery] string roles)
         {
@@ -66,7 +67,7 @@ namespace API.Controllers
         }
 
         [Description("get photos for moderation")]
-        [Authorize(Policy = "ModeratePhotoRole")]
+        [Authorize(Policy = "RequireModerateRole")]
         [HttpGet("photos-to-moderate")]
         public async Task<ActionResult> GetPhotosForModeration()
         {
