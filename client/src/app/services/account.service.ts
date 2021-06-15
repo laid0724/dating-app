@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { User } from '../models/users';
+import { Role, User } from '../models/users';
 
 interface UserCredential {
   userName: string;
@@ -33,7 +33,7 @@ export class AccountService {
   setCurrentUser(user: User): void {
     if (user !== null) {
       user.roles = [];
-      const roles = this.getDecodedToken(user.token).role;
+      const roles = this.getDecodedToken(user.token).role as Role | Role[];
       Array.isArray(roles) ? (user.roles = roles) : user.roles.push(roles);
     }
 

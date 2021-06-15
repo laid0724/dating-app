@@ -16,8 +16,9 @@ export class AdminService {
   }
 
   updateUserRoles(username: string, roles: Role[]): Observable<Role[]> {
-    return this.http.post<Role[]>(this.endpoint + `/edit-roles/${username}`, {
-      params: { roles },
-    });
+    return this.http.post<Role[]>(
+      this.endpoint + `/edit-roles/${username}?roles=${roles}`,
+      {}
+    );
   }
 }
