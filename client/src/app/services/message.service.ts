@@ -5,6 +5,7 @@ import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { getPaginatedResult, getPaginationHeaders } from '../helpers';
+import { Group } from '../models/group';
 import { Message } from '../models/message';
 import { PaginatedResult } from '../models/pagination';
 import { User } from '../models/users';
@@ -43,6 +44,19 @@ export class MessageService {
         .subscribe((messages: Message[]) => {
           this.messageThreadSource$.next([...messages, message]);
         });
+    });
+
+    this.hubConnection.on('UpdatedGroup', (group: Group) => {
+      if (group.connections.some((c) => c.userName === otherUserName)) {
+        this.messageThread$.pipe(take(1)).subscribe((messages) => {
+          messages.forEach((message: Message) => {
+            if (!message.dateRead) {
+              message.dateRead = new Date(Date.now());
+            }
+            this.messageThreadSource$.next([...messages]);
+          });
+        });
+      }
     });
   }
 
