@@ -12,16 +12,22 @@ export class MemberMessagesComponent {
   @ViewChild('messageForm') messageForm: NgForm;
 
   @Input() username: string;
-  @Input() messages: Message[];
+  // @Input() messages: Message[];
   messageContent: string;
 
-  constructor(private messageService: MessageService) {}
+  constructor(public messageService: MessageService) {}
 
   sendMessage(): void {
+    // this.messageService
+    //   .sendMessage(this.username, this.messageContent)
+    //   .subscribe((message: Messages) => {
+    //     this.messages.push(message);
+    //     this.messageForm.reset();
+    //   });
+
     this.messageService
-      .sendMessage(this.username, this.messageContent)
-      .subscribe((message) => {
-        this.messages.push(message);
+      .sendMessageToHub(this.username, this.messageContent)
+      .subscribe(() => {
         this.messageForm.reset();
       });
   }

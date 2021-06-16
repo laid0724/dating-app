@@ -12,6 +12,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Like } from 'src/app/models/like';
 import { Member } from 'src/app/models/member';
 import { Message } from 'src/app/models/message';
+import { User } from 'src/app/models/users';
+import { AccountService } from 'src/app/services/account.service';
 import { LikesService } from 'src/app/services/likes.service';
 import { MessageService } from 'src/app/services/message.service';
 import { PresenceService } from 'src/app/services/presence.service';
@@ -26,8 +28,9 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   activeTab: TabDirective;
 
   member: Member;
-  messages: Message[] = [];
+  // messages: Message[] = [];
   likes: Like[] = [];
+  user: User;
   onlineUsers: string[] = [];
 
   galleryOptions: NgxGalleryOptions[];
@@ -46,10 +49,13 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
   constructor(
     public presence: PresenceService,
     private messageService: MessageService,
+    private accountService: AccountService,
     private likesService: LikesService,
     private toastr: ToastrService,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    this.accountService.currentUser$.subscribe((user) => (this.user = user));
+  }
 
   ngOnInit(): void {
     /*
@@ -99,13 +105,13 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
     return imageUrls;
   }
 
-  loadMessages(): void {
-    this.messageService
-      .getMessageThread(this.member.userName)
-      .subscribe((messages) => {
-        this.messages = messages;
-      });
-  }
+  // loadMessages(): void {
+  //   this.messageService
+  //     .getMessageThread(this.member.userName)
+  //     .subscribe((messages) => {
+  //       this.messages = messages;
+  //     });
+  // }
 
   loadLikes(): void {
     this.likesService
@@ -133,13 +139,17 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
 
   onTabActivated(data: TabDirective): void {
     this.activeTab = data;
-    if (this.activeTab.heading === 'Messages' && this.messages.length === 0) {
-      this.loadMessages();
+    // if (this.activeTab.heading === 'Messages' && this.messages.length === 0) {
+    if (this.activeTab.heading === 'Messages') {
+      this.messageService.createHubConnection(this.user, this.member.userName);
+    } else {
+      this.messageService.stopHubConnection();
     }
   }
 
   ngOnDestroy(): void {
     this.destroyer$.next(true);
     this.destroyer$.unsubscribe();
+    this.messageService.stopHubConnection();
   }
 }

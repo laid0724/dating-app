@@ -1,9 +1,13 @@
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
+import { environment } from 'src/environments/environment';
 import { getPaginatedResult, getPaginationHeaders } from '../helpers';
 import { Message } from '../models/message';
 import { PaginatedResult } from '../models/pagination';
+import { User } from '../models/users';
 
 export type MessageContainer = 'Inbox' | 'Outbox' | 'Unread';
 
@@ -12,8 +16,41 @@ export type MessageContainer = 'Inbox' | 'Outbox' | 'Unread';
 })
 export class MessageService {
   private endpoint = '/api/messages';
+  private hubEndpoint = environment.hubUrl + '/message';
+  private hubConnection: HubConnection;
+  private messageThreadSource$ = new BehaviorSubject<Message[]>([]);
+  messageThread$ = this.messageThreadSource$.asObservable();
 
   constructor(private http: HttpClient) {}
+
+  createHubConnection(user: User, otherUserName: string): void {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl(`${this.hubEndpoint}?user=${otherUserName}`, {
+        accessTokenFactory: () => user.token,
+      })
+      .withAutomaticReconnect()
+      .build();
+
+    this.hubConnection.start().catch((error) => console.error(error));
+
+    this.hubConnection.on('ReceiveMessageThread', (messages: Message[]) => {
+      this.messageThreadSource$.next(messages);
+    });
+
+    this.hubConnection.on('NewMessage', (message: Message) => {
+      this.messageThreadSource$
+        .pipe(take(1))
+        .subscribe((messages: Message[]) => {
+          this.messageThreadSource$.next([...messages, message]);
+        });
+    });
+  }
+
+  stopHubConnection(): void {
+    if (this.hubConnection) {
+      this.hubConnection.stop().catch((error) => console.error(error));
+    }
+  }
 
   getMessages(
     pageNumber: number,
@@ -36,6 +73,20 @@ export class MessageService {
       recipientUserName,
       content,
     });
+  }
+
+  sendMessageToHub(
+    recipientUserName: string,
+    content: string
+  ): Observable<void> {
+    return from(
+      this.hubConnection.invoke('SendMessage', { recipientUserName, content })
+    ).pipe(
+      catchError((error) => {
+        console.error(error);
+        return of(error);
+      })
+    );
   }
 
   deleteMessage(id: number): Observable<null> {
