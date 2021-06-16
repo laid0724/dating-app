@@ -14,6 +14,8 @@ namespace API.Data
         }
         public DbSet<UserLike> Likes { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<Connection> Connections { get; set; }
 
         // here, we are overriding ef's OnModelCreating method and defining relationships ourself for M-to-M rels
         protected override void OnModelCreating(ModelBuilder builder)
