@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Data, ParamMap } from '@angular/router';
 import {
   NgxGalleryAnimation,
@@ -7,33 +7,44 @@ import {
 } from '@kolkov/ngx-gallery';
 import { TabDirective, TabsetComponent } from 'ngx-bootstrap/tabs';
 import { ToastrService } from 'ngx-toastr';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { Like } from 'src/app/models/like';
 import { Member } from 'src/app/models/member';
 import { Message } from 'src/app/models/message';
 import { LikesService } from 'src/app/services/likes.service';
 import { MessageService } from 'src/app/services/message.service';
+import { PresenceService } from 'src/app/services/presence.service';
 
 @Component({
   selector: 'app-member-detail',
   templateUrl: './member-detail.component.html',
   styleUrls: ['./member-detail.component.scss'],
 })
-export class MemberDetailComponent implements OnInit {
+export class MemberDetailComponent implements OnInit, OnDestroy {
   @ViewChild('memberTabs', { static: true }) memberTabs: TabsetComponent;
   activeTab: TabDirective;
 
   member: Member;
   messages: Message[] = [];
   likes: Like[] = [];
+  onlineUsers: string[] = [];
 
   galleryOptions: NgxGalleryOptions[];
   galleryImages: NgxGalleryImage[];
+
+  destroyer$ = new Subject<boolean>();
 
   get isLikedByUser(): boolean {
     return !!this.likes?.find((like) => like.userName === this.member.userName);
   }
 
+  get isOnline(): boolean {
+    return this.onlineUsers.includes(this.member.userName);
+  }
+
   constructor(
+    public presence: PresenceService,
     private messageService: MessageService,
     private likesService: LikesService,
     private toastr: ToastrService,
@@ -70,6 +81,10 @@ export class MemberDetailComponent implements OnInit {
         preview: false,
       },
     ];
+
+    this.presence.onlineUsers$
+      .pipe(takeUntil(this.destroyer$))
+      .subscribe((onlineUsers: string[]) => (this.onlineUsers = onlineUsers));
   }
 
   getImages(): NgxGalleryImage[] {
@@ -121,5 +136,10 @@ export class MemberDetailComponent implements OnInit {
     if (this.activeTab.heading === 'Messages' && this.messages.length === 0) {
       this.loadMessages();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyer$.next(true);
+    this.destroyer$.unsubscribe();
   }
 }

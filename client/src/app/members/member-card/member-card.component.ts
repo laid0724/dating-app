@@ -3,6 +3,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Like } from 'src/app/models/like';
 import { Member } from 'src/app/models/member';
 import { LikesService } from 'src/app/services/likes.service';
+import { PresenceService } from 'src/app/services/presence.service';
 
 @Component({
   selector: 'app-member-card',
@@ -20,7 +21,8 @@ export class MemberCardComponent {
 
   constructor(
     private likesService: LikesService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    public presence: PresenceService
   ) {}
 
   updateLikes(): void {

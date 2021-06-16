@@ -8,6 +8,13 @@
       />
       <div class="card-body">
         <div>
+          <strong>Online Status</strong>
+          <p [ngClass]="isOnline ? 'text-success' : 'text-danger'">
+            <i class="fa fa-user-circle"></i>
+            {{ isOnline ? "Online" : "Offline" }}
+          </p>
+        </div>
+        <div>
           <strong>Location</strong>
           <p>{{ member.city }}, {{ member.country }}</p>
         </div>
