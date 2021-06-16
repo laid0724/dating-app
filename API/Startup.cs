@@ -125,6 +125,7 @@ namespace API
             {
                 endpoints.MapControllers(); // this checks what endpoints are available in the application, e.g., controller endpoints
                 endpoints.MapHub<PresenceHub>("hubs/presence");
+                endpoints.MapHub<MessageHub>("hubs/message");
             });
         }
     }
