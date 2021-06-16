@@ -4,7 +4,7 @@
       <div *ngIf="messages?.length < 1" class="pb-3">
         No messages yet... why don't you say hi?
       </div>
-      <ul *ngIf="messages?.length > 0" class="chat">
+      <ul *ngIf="messages?.length > 0" class="chat" #chatMessagesContainer>
         <li *ngFor="let message of messages">
           <div>
             <span class="chat-img float-right">
