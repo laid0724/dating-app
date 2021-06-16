@@ -78,7 +78,7 @@ namespace API.SignalR
 
             if (group.Connections.Any(c => c.UserName == recipient.UserName))
             {
-                message.DateRead = DateTime.UtcNow;
+                message.DateRead = DateTime.Now;
             }
 
             _messageRepository.AddMessage(message);

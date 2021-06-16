@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using API.DTOs;
 using API.Entities;
@@ -41,6 +42,8 @@ namespace API.Helpers
             // reverse map from dto to entity model:
             CreateMap<MemberUpdateDto, AppUser>();
             CreateMap<RegisterDto, AppUser>();
+
+            CreateMap<DateTime, DateTime>().ConvertUsing(d => DateTime.SpecifyKind(d, DateTimeKind.Local));
         }
     }
 }
