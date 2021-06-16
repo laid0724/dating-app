@@ -1,6 +1,6 @@
 <ng-container *ngIf="messageService.messageThread$ | async; let messages">
   <div class="card">
-    <div class="card-body">
+    <div class="card-body pt-0">
       <div *ngIf="messages?.length < 1" class="pb-3">
         No messages yet... why don't you say hi?
       </div>
@@ -17,9 +17,10 @@
             <div class="chat-body">
               <div class="header">
                 <small class="text-muted">
-                  <span class="fa fa-clock-o"
-                    >&nbsp;{{ message.messageSent | timeago }}</span
-                  >
+                  <i class="fa fa-clock-o"></i>
+                  <span>
+                    {{ message.messageSent | timeago }}
+                  </span>
                   <span
                     class="text-danger"
                     *ngIf="
@@ -38,7 +39,20 @@
                   </span>
                 </small>
               </div>
-              <p>{{ message.content }}</p>
+              <p
+                [class.justify-content-end]="
+                  message.senderUserName === username
+                "
+              >
+                <span
+                  class="chat-bubble"
+                  [class.chat-bubble--other-user]="
+                    message.senderUserName === username
+                  "
+                >
+                  {{ message.content }}
+                </span>
+              </p>
             </div>
           </div>
         </li>
