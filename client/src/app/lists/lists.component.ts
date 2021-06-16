@@ -12,7 +12,7 @@ import { GetLikePredicate, LikesService } from '../services/likes.service';
   styleUrls: ['./lists.component.scss'],
 })
 export class ListsComponent implements OnInit, OnDestroy {
-  members: Partial<Member[]>;
+  members: Partial<Member[]> = [];
   likes: Like[];
   predicate: GetLikePredicate = 'liked';
 

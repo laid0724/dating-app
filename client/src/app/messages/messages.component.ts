@@ -30,7 +30,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   refreshMessages(container: MessageContainer, resetPage?: boolean): void {
     if (resetPage) {
       this.pageNumber = 1;
-      this.pagination = null;
+      this.pagination.currentPage = 1;
     }
     this.messages = [];
     this.messagesRefresher$.next(container);
