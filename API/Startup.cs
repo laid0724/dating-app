@@ -20,6 +20,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using API.Extensions;
 using API.Middleware;
+using API.SignalR;
 
 namespace API
 {
@@ -43,6 +44,8 @@ namespace API
 
             // add identity-related services, e.g., middleware and jwt authentication, are centrally managed here
             services.AddIdentityServices(_config);
+
+            services.AddSignalR();
 
             // services.AddSwaggerGen(c =>
             // {
@@ -111,6 +114,7 @@ namespace API
                 policy
                     .AllowAnyHeader()
                     .AllowAnyMethod()
+                    .AllowCredentials()
                     .WithOrigins("http://localhost:4200")
             );
 
@@ -120,6 +124,7 @@ namespace API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers(); // this checks what endpoints are available in the application, e.g., controller endpoints
+                endpoints.MapHub<PresenceHub>("hubs/presence");
             });
         }
     }
