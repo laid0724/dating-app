@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Data, ParamMap } from '@angular/router';
+import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import {
   NgxGalleryAnimation,
   NgxGalleryImage,
@@ -52,9 +52,16 @@ export class MemberDetailComponent implements OnInit, OnDestroy {
     private accountService: AccountService,
     private likesService: LikesService,
     private toastr: ToastrService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router
   ) {
     this.accountService.currentUser$.subscribe((user) => (this.user = user));
+    /*
+      this will restart component when hitting the same route,
+      solves the issue where if you are chatting with another user and you get notification of
+      new message - clicking into it brings you to the profile but does not refresh chat
+    */
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
   }
 
   ngOnInit(): void {

@@ -17,8 +17,12 @@ namespace API.SignalR
         private readonly IMessageRepository _messageRepository;
         private readonly IMapper _mapper;
         private readonly IUserRepository _userRepository;
-        public MessageHub(IMessageRepository messageRepository, IMapper mapper, IUserRepository userRepository)
+        private readonly IHubContext<PresenceHub> _presenceHub;
+        private readonly PresenceTracker _presenceTracker;
+        public MessageHub(IMessageRepository messageRepository, IMapper mapper, IUserRepository userRepository, IHubContext<PresenceHub> presenceHub, PresenceTracker presenceTracker)
         {
+            _presenceTracker = presenceTracker;
+            _presenceHub = presenceHub;
             _userRepository = userRepository;
             _mapper = mapper;
             _messageRepository = messageRepository;
@@ -79,6 +83,19 @@ namespace API.SignalR
             if (group.Connections.Any(c => c.UserName == recipient.UserName))
             {
                 message.DateRead = DateTime.Now;
+            }
+            // push a notification if receiving user is not in chat room:
+            else
+            {
+                var connections = await _presenceTracker.GetConnectionsForUser(recipient.UserName);
+                if (connections != null)
+                {
+                    await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived", new
+                    {
+                        userName = sender.UserName,
+                        knownAs = sender.KnownAs
+                    });
+                }
             }
 
             _messageRepository.AddMessage(message);
