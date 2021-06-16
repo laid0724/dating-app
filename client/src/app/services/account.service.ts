@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { Role, User } from '../models/users';
+import { PresenceService } from './presence.service';
 
 interface UserCredential {
   userName: string;
@@ -28,7 +29,10 @@ export class AccountService {
   private currentUserSource = new ReplaySubject<User>(1); // only store one value from the stream when next is triggered
   currentUser$ = this.currentUserSource.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private presenceService: PresenceService
+  ) {}
 
   setCurrentUser(user: User): void {
     if (user !== null) {
@@ -48,6 +52,7 @@ export class AccountService {
         tap((user: User) => {
           if (user) {
             this.setCurrentUser(user);
+            this.presenceService.createHubConnect(user);
           }
         })
       );
@@ -58,6 +63,7 @@ export class AccountService {
       tap((user: User) => {
         if (user) {
           this.setCurrentUser(user);
+          this.presenceService.createHubConnect(user);
         }
       })
     );
@@ -66,6 +72,7 @@ export class AccountService {
   logout(): void {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+    this.presenceService.stopHubConnection();
   }
 
   getDecodedToken(token: string): JwtToken {
