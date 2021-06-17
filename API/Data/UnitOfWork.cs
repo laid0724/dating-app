@@ -20,8 +20,10 @@ namespace API.Data
 
         public ILikesRepository LikesRepository => new LikesRepository(_context);
 
+        public IPhotoRepository PhotoRepository => new PhotoRepository(_context, _mapper);
+
         // do not save changes within repositories, that is now the unit of work's job!
-        
+
         public async Task<bool> Complete()
         {
             return await _context.SaveChangesAsync() > 0;

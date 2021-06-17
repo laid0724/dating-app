@@ -63,6 +63,10 @@ export class MembersService {
     return this.userParams;
   }
 
+  resetCache(): void {
+    this.membersCache.clear();
+  }
+
   getMembers(userParams: UserParams): Observable<PaginatedResult<Member[]>> {
     // new caching mechanism using map class:
     const key = Object.values(userParams).join('-');

@@ -1,12 +1,22 @@
 <div class="row my-3">
   <div
-    class="col-2 d-flex mb-3 justify-content-center align-items-center flex-column"
+    class="
+      col-2
+      d-flex
+      mb-3
+      justify-content-center
+      align-items-center
+      flex-column
+    "
     *ngFor="let photo of member.photos"
   >
-    <img [src]="photo.url" [alt]="photo.url" class="img-thumbnail p-1" />
+    <div class="img-wrapper" [class.img-wrapper--is-not-approved]="!photo.isApproved">
+      <img [src]="photo.url" [alt]="photo.url" class="img-thumbnail" />
+      <p class="is-not-approved-label">Awaiting Approval</p>
+    </div>
     <div class="d-flex justify-content-center align-items-center">
       <button
-        [disabled]="photo.isMain"
+        [disabled]="photo.isMain || !photo.isApproved"
         (click)="setMainPhoto(photo)"
         [ngClass]="photo.isMain ? 'btn-success active' : 'btn-outline-success'"
         class="btn btn-sm"

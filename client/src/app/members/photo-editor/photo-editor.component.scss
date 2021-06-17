@@ -1,16 +1,39 @@
-
-img.img-thumbnail {
-  height: 100px;
-  min-width: 100px;
-  margin-bottom: 2px;
-}
-
 .nv-file-over {
   // styling for the file drop zone when a file is dragged onto it
   border: dotted 3px red;
 }
 
-input[type=file] {
+input[type="file"] {
   // hides the no file chosen text
-  color:transparent;
+  color: transparent;
+}
+
+p.is-not-approved-label {
+  display: none;
+}
+
+.img {
+  &-wrapper {
+    height: 100px;
+    width: 100px;
+    position: relative;
+    &--is-not-approved {
+      .img-thumbnail {
+        filter: blur(3px) grayscale(1);
+      }
+      p.is-not-approved-label {
+        display: block;
+        position: absolute;
+        color: red;
+        font-weight: bold;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+  &-thumbnail {
+    height: 100%;
+    width: 100%;
+  }
 }

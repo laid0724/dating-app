@@ -51,6 +51,11 @@ namespace API.Controllers
 
             var users = await _unitOfWork.UserRepository.GetMembersAsync(userParams);
 
+            foreach (var user in users)
+            {
+                user.Photos = user.Photos.Where(p => p.IsApproved).ToList();
+            }
+
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 
             return Ok(users);
@@ -60,10 +65,18 @@ namespace API.Controllers
         [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
+            var apiCallerUsername = User.GetUsername();
+
             var user = await _unitOfWork.UserRepository.GetMemberAsync(username);
+
             if (user == null)
             {
                 return NotFound();
+            }
+
+            if (apiCallerUsername != username)
+            {
+                user.Photos = user.Photos.Where(p => p.IsApproved).ToList();
             }
 
             return Ok(user);
@@ -99,13 +112,14 @@ namespace API.Controllers
             var photo = new Photo
             {
                 Url = result.SecureUrl.AbsoluteUri,
-                PublicId = result.PublicId
+                PublicId = result.PublicId,
+                IsApproved = false,
             };
 
-            if (user.Photos.Count == 0)
-            {
-                photo.IsMain = true;
-            }
+            // if (user.Photos.Count == 0)
+            // {
+            //     photo.IsMain = true;
+            // }
 
             user.Photos.Add(photo);
 
@@ -145,6 +159,11 @@ namespace API.Controllers
             if (photo.IsMain)
             {
                 return BadRequest("This is already your main photo.");
+            }
+
+            if (!photo.IsApproved)
+            {
+                return BadRequest("Photo is not approved yet");
             }
 
             var currentMain = user.Photos.FirstOrDefault(e => e.IsMain);

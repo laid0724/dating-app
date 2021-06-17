@@ -56,18 +56,18 @@ Run Project:
 
 ---
 
-TODO - Features to be implemented, in no particular order:
+TODO - Features to be implemented / Bugs to be fixed, in no particular order:
 
-1. impl unread messages badges via signalr
-2. photo management feature, uploaded photo needs to be approved by admin/moderator
-3. RWD
-3. swiping left/right like tinder
-5. block/report users, admin can read/respond to reports and ban users
-6. transfer db to dockerized pgsql
-7. separate admin angular project with statistics displayed via ngx charts, manage users and content, etc.
-8. events / news / announcement center
-9. user location / google map api integration
-10. forget password / confirm email functionality via asp core identity
-11. cooler homepage with banners and animations, needs design
-12. like notification / badge
-13. pet / owner photo - pet dating app maybe?
+- photo upload progress bar not reflective of actual progress; gets stuck when file too big
+- impl unread messages badges via signalr
+- RWD
+- swiping left/right like tinder
+- block/report users, admin can read/respond to reports and ban users
+- transfer db to dockerized pgsql
+- separate admin angular project with statistics displayed via ngx charts, manage users and content, etc.
+- events / news / announcement center
+- user location / google map api integration
+- forget password / confirm email functionality via asp core identity
+- cooler homepage with banners and animations, needs design
+- like notification / badge
+- pet / owner photo - pet dating app maybe?

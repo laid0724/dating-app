@@ -30,6 +30,7 @@ import { UserManagementComponent } from './admin/user-management/user-management
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 import { SpacedCommaPipe } from './pipes/spaced-comma.pipe';
 import { ConfirmDialogComponent } from './modals/confirm-dialog/confirm-dialog.component';
+import { PhotoManagementComponent } from './admin/photo-management/photo-management.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +56,7 @@ import { ConfirmDialogComponent } from './modals/confirm-dialog/confirm-dialog.c
     RolesModalComponent,
     SpacedCommaPipe,
     ConfirmDialogComponent,
+    PhotoManagementComponent,
   ],
   imports: [
     BrowserModule,

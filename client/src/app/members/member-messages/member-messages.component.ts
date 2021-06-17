@@ -18,16 +18,15 @@ export class MemberMessagesComponent implements OnDestroy {
   @ViewChild('messageForm') messageForm: NgForm;
 
   // see: https://stackoverflow.com/questions/39366981/viewchild-in-ngif
-  private chatMessagesContainer: ElementRef<HTMLDivElement>;
-  @ViewChild('chatMessagesContainer', { static: false }) set content(
-    content: ElementRef<HTMLDivElement>
-  ) {
-    if (content) {
-      // initially setter gets called with undefined
-      this.chatMessagesContainer = content;
+  private _chatMessagesContainer: ElementRef<HTMLDivElement>;
+  @ViewChild('chatMessagesContainer', { static: false })
+  set chatMessagesContainer(chatMessagesContainer: ElementRef<HTMLDivElement>) {
+    // initially setter gets called with undefined
+    if (chatMessagesContainer) {
+      this._chatMessagesContainer = chatMessagesContainer;
 
       const chatMessagesContainerEl: HTMLDivElement =
-        this.chatMessagesContainer.nativeElement;
+        this._chatMessagesContainer.nativeElement;
 
       // scroll to bottom of the chat window
       this.renderer.setProperty(

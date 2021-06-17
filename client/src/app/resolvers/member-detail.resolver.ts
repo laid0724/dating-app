@@ -5,7 +5,7 @@ import { Member } from '../models/member';
 import { MembersService } from '../services/members.service';
 
 @Injectable({ providedIn: 'root' })
-export class MemberDetailedResolver implements Resolve<Member> {
+export class MemberDetailResolver implements Resolve<Member> {
   constructor(private membersService: MembersService) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Member> {
