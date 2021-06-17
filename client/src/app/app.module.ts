@@ -29,6 +29,7 @@ import { HasRoleDirective } from './directives/has-role.directive';
 import { UserManagementComponent } from './admin/user-management/user-management.component';
 import { RolesModalComponent } from './modals/roles-modal/roles-modal.component';
 import { SpacedCommaPipe } from './pipes/spaced-comma.pipe';
+import { ConfirmDialogComponent } from './modals/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { SpacedCommaPipe } from './pipes/spaced-comma.pipe';
     UserManagementComponent,
     RolesModalComponent,
     SpacedCommaPipe,
+    ConfirmDialogComponent,
   ],
   imports: [
     BrowserModule,

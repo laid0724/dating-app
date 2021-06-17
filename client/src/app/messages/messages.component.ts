@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { Message } from '../models/message';
 import { PaginatedResult, Pagination } from '../models/pagination';
+import { ConfirmService } from '../services/confirm.service';
 import { MessageContainer, MessageService } from '../services/message.service';
 
 @Component({
@@ -21,7 +22,10 @@ export class MessagesComponent implements OnInit, OnDestroy {
   messagesRefresher$ = new Subject<MessageContainer>();
   destroyer$ = new Subject<boolean>();
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private confirmService: ConfirmService
+  ) {}
 
   ngOnInit(): void {
     this.loadMessages();
@@ -61,12 +65,18 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   deleteMessage(id: number): void {
-    this.messageService.deleteMessage(id).subscribe(() => {
-      this.messages.splice(
-        this.messages.findIndex((m) => m.id === id),
-        1
-      );
-    });
+    this.confirmService
+      .confirm('Confirm delete message', 'Are you sure? This cannot be undone.')
+      .subscribe((result: boolean) => {
+        if (result) {
+          this.messageService.deleteMessage(id).subscribe(() => {
+            this.messages.splice(
+              this.messages.findIndex((m) => m.id === id),
+              1
+            );
+          });
+        }
+      });
   }
 
   onPageChanged(pageChangeEvent: { page: number; itemsPerPage: number }): void {
