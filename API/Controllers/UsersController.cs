@@ -41,12 +41,12 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
         {
-            var requestingUser = await GetAppUser();
-            userParams.CurrentUserName = requestingUser.UserName;
+            var gender = await _unitOfWork.UserRepository.GetUserGender(User.GetUsername());
+            userParams.CurrentUserName = User.GetUsername();
 
             if (string.IsNullOrEmpty(userParams.Gender))
             {
-                userParams.Gender = requestingUser.Gender == "male" ? "female" : "male";
+                userParams.Gender = gender == "male" ? "female" : "male";
             }
 
             var users = await _unitOfWork.UserRepository.GetMembersAsync(userParams);

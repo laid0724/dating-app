@@ -34,7 +34,7 @@ namespace API.Helpers
 
             // var user = await userRepository.GetUserByUserNameAsync(username); // get app user object via username
 
-            user.LastActive = DateTime.Now;
+            user.LastActive = DateTime.UtcNow;
 
             await unitOfWork.Complete();
         }

@@ -87,7 +87,7 @@ namespace API.SignalR
 
             if (group.Connections.Any(c => c.UserName == recipient.UserName))
             {
-                message.DateRead = DateTime.Now;
+                message.DateRead = DateTime.UtcNow;
             }
             // push a notification if receiving user is not in chat room:
             else

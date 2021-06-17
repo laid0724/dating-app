@@ -44,8 +44,6 @@ namespace API.Data
         {
             // conversation between two users
             var messages = await _context.Messages
-                .Include(u => u.Sender).ThenInclude(p => p.Photos)
-                .Include(u => u.Recipient).ThenInclude(p => p.Photos)
                 .Where(m =>
                     m.Recipient.UserName == currentUserName &&
                     m.RecipientDeleted == false &&
@@ -55,35 +53,35 @@ namespace API.Data
                     m.SenderDeleted == false
                 )
                 .OrderBy(m => m.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
-            var unreadMessages = messages.Where(m => m.DateRead == null && m.Recipient.UserName == currentUserName).ToList();
+            var unreadMessages = messages.Where(m => m.DateRead == null && m.RecipientUserName == currentUserName).ToList();
 
             if (unreadMessages.Any())
             {
                 foreach (var message in unreadMessages)
                 {
-                    message.DateRead = DateTime.Now;
+                    message.DateRead = DateTime.UtcNow;
                 }
             }
 
-            return _mapper.Map<IEnumerable<MessageDto>>(messages);
+            return messages;
         }
 
         public async Task<PagedList<MessageDto>> GetMessagesForUser(MessageParams messageParams)
         {
-            var query = _context.Messages
+            var messages = _context.Messages
                 .OrderByDescending(m => m.MessageSent)
+                .ProjectTo<MessageDto>(_mapper.ConfigurationProvider)
                 .AsQueryable();
 
-            query = messageParams.Container switch
+            messages = messageParams.Container switch
             {
-                "Inbox" => query.Where(u => u.Recipient.UserName == messageParams.UserName && u.RecipientDeleted == false),
-                "Outbox" => query.Where(u => u.Sender.UserName == messageParams.UserName && u.SenderDeleted == false),
-                _ => query.Where(u => u.Recipient.UserName == messageParams.UserName && u.RecipientDeleted == false && u.DateRead == null)
+                "Inbox" => messages.Where(u => u.RecipientUserName == messageParams.UserName && u.RecipientDeleted == false),
+                "Outbox" => messages.Where(u => u.SenderUserName == messageParams.UserName && u.SenderDeleted == false),
+                _ => messages.Where(u => u.RecipientUserName == messageParams.UserName && u.RecipientDeleted == false && u.DateRead == null)
             };
-
-            var messages = query.ProjectTo<MessageDto>(_mapper.ConfigurationProvider);
 
             return await PagedList<MessageDto>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
         }
@@ -107,7 +105,7 @@ namespace API.Data
         {
             return await _context.Groups.Include(e => e.Connections).FirstOrDefaultAsync(e => e.Name == groupName);
         }
-        
+
         public async Task<Group> GetGroupForConnection(string connectionId)
         {
             return await _context.Groups
