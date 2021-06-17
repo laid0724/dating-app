@@ -69,5 +69,5 @@ TODO - Features to be implemented, in no particular order:
 9. user location / google map api integration
 10. forget password / confirm email functionality via asp core identity
 11. cooler homepage with banners and animations, needs design
-12. like notification
+12. like notification / badge
 13. pet / owner photo - pet dating app maybe?
