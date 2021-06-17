@@ -34,7 +34,6 @@ namespace API.Data
 
         public async Task<Message> GetMessage(int id)
         {
-            // return await _context.Messages.FindAsync(id);
             return await _context.Messages
                 .Include(u => u.Sender)
                 .Include(u => u.Recipient)
@@ -66,8 +65,6 @@ namespace API.Data
                 {
                     message.DateRead = DateTime.Now;
                 }
-
-                await _context.SaveChangesAsync();
             }
 
             return _mapper.Map<IEnumerable<MessageDto>>(messages);
@@ -110,12 +107,7 @@ namespace API.Data
         {
             return await _context.Groups.Include(e => e.Connections).FirstOrDefaultAsync(e => e.Name == groupName);
         }
-
-        public async Task<bool> SaveAllAsync()
-        {
-            return await _context.SaveChangesAsync() > 0;
-        }
-
+        
         public async Task<Group> GetGroupForConnection(string connectionId)
         {
             return await _context.Groups

@@ -28,15 +28,15 @@ namespace API.Helpers
 
             // var username = resultContext.HttpContext.User.GetUsername(); // get username via ClaimsPrincipal
 
-            var userRepository = resultContext.HttpContext.RequestServices.GetService<IUserRepository>(); // get UserRepository service so we can access its method
+            var unitOfWork = resultContext.HttpContext.RequestServices.GetService<IUnitOfWork>(); // get unit of work service so we can access user repository
 
-            var user = await userRepository.GetUserByIdAsync(userId); // get app user object via user id
+            var user = await unitOfWork.UserRepository.GetUserByIdAsync(userId); // get app user object via user id
 
             // var user = await userRepository.GetUserByUserNameAsync(username); // get app user object via username
 
             user.LastActive = DateTime.Now;
 
-            await userRepository.SaveAllAsync();
+            await unitOfWork.Complete();
         }
     }
 }

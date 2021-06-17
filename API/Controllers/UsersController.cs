@@ -1,17 +1,12 @@
-using System.Security.Claims;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using API.Extensions;
@@ -26,18 +21,19 @@ namespace API.Controllers
     // [Authorize(Roles = "Admin")] // this denotes that only user with a role of admin can access this api/method
     public class UsersController : BaseApiController
     {
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IPhotoService _photoService;
         private readonly ILogger<UsersController> _logger;
+        private readonly IUnitOfWork _unitOfWork;
 
-        // instead of importing the entire db context, we are just injecting the UserRepository service.
+        // instead of importing the entire db context, we are just injecting the UnitOfWork service with access to individual repositories as its properties.
         // for benefits of the repository pattern, see: https://www.c-sharpcorner.com/UploadFile/8a67c0/repository-pattern-and-generic-repository-pattern/
-        public UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService, ILogger<UsersController> logger)
+        // see, e.g., unit of work pattern: https://www.c-sharpcorner.com/UploadFile/b1df45/unit-of-work-in-repository-pattern/
+        public UsersController(IUnitOfWork unitOfWork, IMapper mapper, IPhotoService photoService, ILogger<UsersController> logger)
         {
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
             _photoService = photoService;
-            _userRepository = userRepository;
             _logger = logger;
         }
 
@@ -53,7 +49,7 @@ namespace API.Controllers
                 userParams.Gender = requestingUser.Gender == "male" ? "female" : "male";
             }
 
-            var users = await _userRepository.GetMembersAsync(userParams);
+            var users = await _unitOfWork.UserRepository.GetMembersAsync(userParams);
 
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 
@@ -64,7 +60,7 @@ namespace API.Controllers
         [HttpGet("{username}", Name = "GetUser")]
         public async Task<ActionResult<MemberDto>> GetUser(string username)
         {
-            var user = await _userRepository.GetMemberAsync(username);
+            var user = await _unitOfWork.UserRepository.GetMemberAsync(username);
             if (user == null)
             {
                 return NotFound();
@@ -81,9 +77,9 @@ namespace API.Controllers
 
             _mapper.Map(memberUpdateDto, user);
 
-            _userRepository.Update(user);
+            _unitOfWork.UserRepository.Update(user);
 
-            if (await _userRepository.SaveAllAsync()) return NoContent();
+            if (await _unitOfWork.Complete()) return NoContent();
 
             return BadRequest("Failed to update user");
         }
@@ -113,7 +109,7 @@ namespace API.Controllers
 
             user.Photos.Add(photo);
 
-            if (await _userRepository.SaveAllAsync())
+            if (await _unitOfWork.Complete())
             {
                 /* 
                     return a 201 Created response when we add resource to the server
@@ -159,7 +155,7 @@ namespace API.Controllers
             }
             photo.IsMain = true;
 
-            if (await _userRepository.SaveAllAsync())
+            if (await _unitOfWork.Complete())
             {
                 return NoContent();
             }
@@ -195,7 +191,7 @@ namespace API.Controllers
 
             user.Photos.Remove(photo);
 
-            if (await _userRepository.SaveAllAsync())
+            if (await _unitOfWork.Complete())
             {
                 return NoContent();
             }
@@ -215,7 +211,7 @@ namespace API.Controllers
                 user sending the request as a ClaimsPrincipal, to read more, see:
                 https://docs.microsoft.com/en-us/dotnet/api/system.security.claims.claimsprincipal?view=net-5.0
             */
-            return await _userRepository.GetUserByUserNameAsync(User.GetUsername());
+            return await _unitOfWork.UserRepository.GetUserByUserNameAsync(User.GetUsername());
         }
     }
 }

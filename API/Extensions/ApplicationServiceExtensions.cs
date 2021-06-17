@@ -38,13 +38,9 @@ namespace API.Extensions
             // provide interface and implementation:
             services.AddScoped<ITokenService, TokenService>();
 
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>(); // this will inject all repositories now
 
             services.AddScoped<IPhotoService, PhotoService>();
-
-            services.AddScoped<ILikesRepository, LikesRepository>();
-
-            services.AddScoped<IMessageRepository, MessageRepository>();
 
             services.AddScoped<LogUserActivity>();
 

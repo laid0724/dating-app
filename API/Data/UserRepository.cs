@@ -96,12 +96,6 @@ namespace API.Data
                 .ToListAsync();
         }
 
-        public async Task<bool> SaveAllAsync()
-        {
-            // if more than a single change has been made when saving the db changes
-            return await _context.SaveChangesAsync() > 0;
-        }
-
         public void Update(AppUser user)
         {
             // this lets entity add a flag to the user entity to denote that it has been modified

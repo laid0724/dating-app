@@ -87,19 +87,12 @@ namespace API.Data
                 .FirstOrDefaultAsync(e => e.Id == userId);
         }
 
-        public async Task<bool> DeleteLike(UserLike like)
+        public async Task DeleteLike(UserLike like)
         {
             // see: https://stackoverflow.com/questions/23315542/finding-an-element-in-a-dbset-with-a-composite-primary-key
             var likeEntity = await _context.Likes.FindAsync(like.SourceUserId, like.LikedUserId);
 
             _context.Likes.Remove(like);
-
-            return await SaveAllAsync();
-        }
-        public async Task<bool> SaveAllAsync()
-        {
-            // if more than a single change has been made when saving the db changes
-            return await _context.SaveChangesAsync() > 0;
         }
     }
 }
