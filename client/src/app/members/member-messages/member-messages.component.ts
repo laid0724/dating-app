@@ -2,11 +2,11 @@ import {
   Component,
   ElementRef,
   Input,
+  OnDestroy,
   Renderer2,
   ViewChild,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Message } from 'src/app/models/message';
 import { MessageService } from 'src/app/services/message.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './member-messages.component.html',
   styleUrls: ['./member-messages.component.scss'],
 })
-export class MemberMessagesComponent {
+export class MemberMessagesComponent implements OnDestroy {
   @ViewChild('messageForm') messageForm: NgForm;
 
   // see: https://stackoverflow.com/questions/39366981/viewchild-in-ngif
@@ -60,5 +60,11 @@ export class MemberMessagesComponent {
       .subscribe(() => {
         this.messageForm.reset();
       });
+  }
+
+  ngOnDestroy(): void {
+    // this is so that remnants of the last chat with another user
+    // wont show up when you swap to chat with another user
+    this.messageService.clearMessageThread();
   }
 }

@@ -106,4 +106,8 @@ export class MessageService {
   deleteMessage(id: number): Observable<null> {
     return this.http.delete<null>(this.endpoint + `/${id}`);
   }
+
+  clearMessageThread(): void {
+    this.messageThreadSource$.next([]);
+  }
 }
