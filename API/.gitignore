@@ -6,3 +6,5 @@ Thumbs.db
 /bin/*
 /obj/*
 *.db*
+
+appsettings.Development.json

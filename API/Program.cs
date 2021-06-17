@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using API.Entities;
@@ -26,9 +24,20 @@ namespace API
                 
             */
             var host = CreateHostBuilder(args).Build();
-            
+
             using var scope = host.Services.CreateScope();
             var services = scope.ServiceProvider;
+
+            // get config based on env
+            // see: https://stackoverflow.com/questions/63199833/access-configuration-from-net-core-program-cs
+            // and: https://stackoverflow.com/questions/44437325/access-environment-name-in-program-main-in-asp-net-core
+            // IMPORTANT: read from ASPNETCORE_ENVIRONMENT and NOT from DOTNET_ENVIRONMENT
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var isDevelopment = env == Environments.Development;
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile($"{(isDevelopment ? "appsettings." + env + ".json" : "appsettings.json")}", optional: false, reloadOnChange: true)
+                .AddEnvironmentVariables()
+                .Build();
 
             try
             {
@@ -41,9 +50,9 @@ namespace API
 
                 // run all seeders here:
                 // await Seed.SeedUsers(context);
-                await Seed.SeedUsers(userManager, roleManager);
+                await Seed.SeedUsers(userManager, roleManager, configuration, env);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 // this is to catch all error related to migrations/seeding
                 var logger = services.GetRequiredService<ILogger<Program>>();
