@@ -48,7 +48,11 @@ export class MembersService {
     accountService.currentUser$
       // do not use take(1) here because it will not work when user logout and login as another, as observable is complete.
       // .pipe(take(1))
-      .subscribe((user) => {
+      .subscribe((user: User) => {
+        if (user === null) {
+          // clear cache when user logs out
+          this.membersCache.clear();
+        }
         this.user = user;
         this.userParams = new UserParams(user);
       });
