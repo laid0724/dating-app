@@ -27,16 +27,19 @@ export class MessagesComponent implements OnInit, OnDestroy {
     this.loadMessages();
   }
 
-  refreshMessages(container: MessageContainer, resetPage?: boolean): void {
-    if (resetPage) {
-      this.pageNumber = 1;
-      this.pagination.currentPage = 1;
-    }
-    this.messages = [];
+  resetPage(): void {
+    this.pageNumber = 1;
+    this.pagination.currentPage = 1;
+  }
+
+  refreshMessages(container: MessageContainer): void {
     this.messagesRefresher$.next(container);
   }
 
-  loadMessages(): void {
+  loadMessages(config?: { resetPage: boolean }): void {
+    if (config && config.resetPage) {
+      this.resetPage();
+    }
     this.loading = true;
     this.messagesRefresher$
       .pipe(
