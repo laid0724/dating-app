@@ -14,7 +14,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623232698/r9vxtw02dgl1jhdllsut.jpg",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -33,7 +34,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623236660/idahbstfeegcarpmur69.jpg",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -52,7 +54,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623236661/ezs2nvrwc9fxlluu6odd.jpg",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -71,7 +74,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623236663/jslc3f1gpgf0d3akenfi.jpg",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -90,7 +94,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623236664/arik9gt1t3c9v95dbmvk.jpg",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -109,7 +114,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623236666/cehgofyyui2mj8fqu1yx.webp",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -128,7 +134,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623236668/koriceo3awp3gahxxw2o.jpg",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -147,7 +154,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623306855/y8sfbrr9yfeistztwsy4.jpg",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -166,7 +174,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623306287/ihiba1idszfkapketr0r.webp",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     },
@@ -185,7 +194,8 @@
         "Photos": [
             {
                 "Url": "https://res.cloudinary.com/laid0724/image/upload/v1623306289/sg9zfycl2xm8ly9myhxs.jpg",
-                "IsMain": true
+                "IsMain": true,
+                "IsApproved": true
             }
         ]
     }
