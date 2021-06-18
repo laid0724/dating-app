@@ -18,13 +18,13 @@ export class MemberGuard implements CanActivate {
   canActivate(): Observable<boolean> {
     return this.accountService.currentUser$.pipe(
       map((user: User) => {
-        const isAdminOrModerator = user.roles.includes('Member');
+        const isMember = user.roles.includes('Member');
 
-        if (!isAdminOrModerator) {
+        if (!isMember) {
           this.toastr.error('You cannot enter this area');
         }
 
-        return isAdminOrModerator;
+        return isMember;
       })
     );
   }
