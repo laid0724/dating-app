@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -51,8 +50,10 @@ export class NavComponent implements OnInit {
       return;
     }
 
-    this.accountService.login(this.form.value).subscribe((res: User) => {
-      this.router.navigateByUrl('/members');
+    this.accountService.login(this.form.value).subscribe((user: User) => {
+      !user.roles.includes('Member')
+        ? this.router.navigateByUrl('/admin')
+        : this.router.navigateByUrl('/members');
     });
   }
 

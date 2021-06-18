@@ -5,7 +5,7 @@
     >
     <ul class="navbar-nav mr-auto">
       <ng-container *ngIf="currentUser$ | async">
-        <li class="nav-item">
+        <li class="nav-item" *appHasRole="['Member']">
           <a
             class="nav-link"
             [routerLink]="['/members']"
@@ -13,7 +13,7 @@
             >Matches</a
           >
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *appHasRole="['Member']">
           <a
             class="nav-link"
             [routerLink]="['/lists']"
@@ -21,7 +21,7 @@
             >Lists</a
           >
         </li>
-        <li class="nav-item">
+        <li class="nav-item" *appHasRole="['Member']">
           <a
             class="nav-link"
             [routerLink]="['/messages']"
@@ -50,10 +50,13 @@
         Welcome {{ user.knownAs || user.userName | titlecase }}</a
       >
       <div class="dropdown-menu" *dropdownMenu>
-        <a class="dropdown-item" [routerLink]="['/member/edit']">
-          Edit Profile</a
-        >
-        <div class="dropdown-divider"></div>
+        <ng-container *appHasRole="['Member']">
+          <a class="dropdown-item" [routerLink]="['/member/edit']">
+            Edit Profile</a
+          >
+          <div class="dropdown-divider"></div>
+        </ng-container>
+
         <a class="dropdown-item" (click)="logout()">Logout</a>
       </div>
     </div>

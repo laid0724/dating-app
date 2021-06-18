@@ -1,20 +1,29 @@
-<div class="row">
-  <div class="col-12">
-    <table class="table">
-      <tr>
-        <th style="width: 30%">Username</th>
-        <th style="width: 40%">Active Roles</th>
-        <th style="width: 30%"></th>
-      </tr>
-      <tr *ngFor="let user of users">
-        <td>{{ user.userName }}</td>
-        <td>{{ user.roles.toString() | spacedComma }}</td>
-        <td>
-          <button class="btn btn-outline-info" (click)="openRolesModal(user)">
-            Edit Roles
-          </button>
-        </td>
-      </tr>
-    </table>
+<ng-container *ngIf="currentUser$ | async; let currentUser">
+  <div class="row">
+    <div class="col-12">
+      <table class="table">
+        <tr>
+          <th style="width: 30%">Username</th>
+          <th style="width: 40%">Active Roles</th>
+          <th style="width: 30%"></th>
+        </tr>
+        <tr *ngFor="let user of users">
+          <td>{{ user.userName }}</td>
+          <td>{{ user.roles.toString() | spacedComma }}</td>
+          <td>
+            <button
+              class="btn btn-outline-info"
+              (click)="openRolesModal(user)"
+              [disabled]="
+                user.userName === 'admin' ||
+                currentUser.userName === user.userName
+              "
+            >
+              Edit Roles
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
   </div>
-</div>
+</ng-container>

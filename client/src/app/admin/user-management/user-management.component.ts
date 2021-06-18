@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Observable } from 'rxjs';
 import { RolesModalComponent } from 'src/app/modals/roles-modal/roles-modal.component';
 import { Role, User } from 'src/app/models/users';
+import { AccountService } from 'src/app/services/account.service';
 import { AdminService } from 'src/app/services/admin.service';
 
 export interface CheckboxOption {
@@ -17,13 +19,17 @@ export interface CheckboxOption {
 })
 export class UserManagementComponent implements OnInit {
   users: Partial<User[]>;
+  currentUser$: Observable<User>;
 
   bsModalRef: BsModalRef;
 
   constructor(
     private adminService: AdminService,
+    private accountService: AccountService,
     private modalService: BsModalService
-  ) {}
+  ) {
+    this.currentUser$ = accountService.currentUser$;
+  }
 
   ngOnInit(): void {
     this.getUsersWithRoles();
