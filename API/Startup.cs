@@ -107,11 +107,16 @@ namespace API
             app.UseAuthentication(); // this is a must for JWT authentication
             app.UseAuthorization();
 
+            // IMPORTANT FOR SERVING ANGULAR APP
+            app.UseDefaultFiles(); // if there is an index.html in wwwroot, that will be served.
+            app.UseStaticFiles();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers(); // this checks what endpoints are available in the application, e.g., controller endpoints
                 endpoints.MapHub<PresenceHub>("hubs/presence");
                 endpoints.MapHub<MessageHub>("hubs/message");
+                endpoints.MapFallbackToController("Index", "Fallback"); // IMPORTANT FOR SERVING ANGULAR APP
             });
         }
     }
