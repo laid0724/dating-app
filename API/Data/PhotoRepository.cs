@@ -19,9 +19,10 @@ namespace API.Data
             _mapper = mapper;
             _context = context;
         }
-        public async Task<ICollection<PhotoForApprovalDto>> GetUnapprovedPhotos()
+        public async Task<IEnumerable<PhotoForApprovalDto>> GetUnapprovedPhotos()
         {
             return await _context.Photos
+                .IgnoreQueryFilters()
                 .Where(p => !p.IsApproved)
                 .ProjectTo<PhotoForApprovalDto>(_mapper.ConfigurationProvider)
                 .ToListAsync();
@@ -29,13 +30,15 @@ namespace API.Data
 
         public async Task<Photo> GetPhotoById(int photoId)
         {
-            return await _context.Photos.FindAsync(photoId);
+            return await _context.Photos
+                .IgnoreQueryFilters()
+                .SingleOrDefaultAsync(p => p.Id == photoId);
         }
 
 
         public void RemovePhoto(Photo photo)
         {
-            _context.Remove(photo);
+            _context.Photos.Remove(photo);
         }
     }
 }

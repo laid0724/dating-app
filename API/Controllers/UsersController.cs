@@ -51,11 +51,6 @@ namespace API.Controllers
 
             var users = await _unitOfWork.UserRepository.GetMembersAsync(userParams);
 
-            foreach (var user in users)
-            {
-                user.Photos = user.Photos.Where(p => p.IsApproved).ToList();
-            }
-
             Response.AddPaginationHeader(users.CurrentPage, users.PageSize, users.TotalCount, users.TotalPages);
 
             return Ok(users);
@@ -67,16 +62,11 @@ namespace API.Controllers
         {
             var apiCallerUsername = User.GetUsername();
 
-            var user = await _unitOfWork.UserRepository.GetMemberAsync(username);
+            var user = await _unitOfWork.UserRepository.GetMemberAsync(username, isCurrentUser: apiCallerUsername == username);
 
             if (user == null)
             {
                 return NotFound();
-            }
-
-            if (apiCallerUsername != username)
-            {
-                user.Photos = user.Photos.Where(p => p.IsApproved).ToList();
             }
 
             return Ok(user);
@@ -148,7 +138,7 @@ namespace API.Controllers
         [HttpPut("set-main-photo/{photoId}")]
         public async Task<ActionResult> SetMainPhoto(int photoId)
         {
-            var user = await GetAppUser();
+            var user = await _unitOfWork.UserRepository.GetUserByPhotoId(photoId);
             var photo = user.Photos.FirstOrDefault(e => e.Id == photoId);
 
             if (photo == null)
@@ -172,6 +162,7 @@ namespace API.Controllers
             {
                 currentMain.IsMain = false;
             }
+
             photo.IsMain = true;
 
             if (await _unitOfWork.Complete())
@@ -186,7 +177,7 @@ namespace API.Controllers
         [HttpDelete("delete-photo/{photoId}")]
         public async Task<ActionResult> DeletePhoto(int photoId)
         {
-            var user = await GetAppUser();
+            var user = await _unitOfWork.UserRepository.GetUserByPhotoId(photoId);
             var photo = user.Photos.FirstOrDefault(e => e.Id == photoId);
 
             if (photo == null)

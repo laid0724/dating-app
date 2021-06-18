@@ -15,9 +15,9 @@
       *ngFor="let photo of photos"
     >
       <h6>{{ photo.userName | titlecase }}</h6>
-      <img [src]="photo.url" [alt]="photo.url" class="img-thumbnail" />
+      <img [src]="photo.url" [alt]="photo.userName" class="img-thumbnail" />
       <div class="d-flex justify-content-center align-items-center">
-        <button (click)="approvePhoto(photo)" class="btn btn-sm btn-success">
+        <button (click)="approvePhoto(photo.id)" class="btn btn-sm btn-success">
           Approve
         </button>
         <button (click)="rejectPhoto(photo.id)" class="btn btn-sm btn-danger">

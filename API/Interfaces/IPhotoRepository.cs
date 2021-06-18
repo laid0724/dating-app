@@ -7,7 +7,7 @@ namespace API.Interfaces
 {
     public interface IPhotoRepository
     {
-        Task<ICollection<PhotoForApprovalDto>> GetUnapprovedPhotos();
+        Task<IEnumerable<PhotoForApprovalDto>> GetUnapprovedPhotos();
         Task<Photo> GetPhotoById(int photoId);
         void RemovePhoto(Photo photo);
     }

@@ -22,7 +22,7 @@ namespace API.Data
             _context = context;
         }
 
-        public async Task<MemberDto> GetMemberAsync(string username)
+        public async Task<MemberDto> GetMemberAsync(string username, bool? isCurrentUser)
         {
             // AutoMapper queryable extension: ProjectTo<ClassToMapTo>(_mapper.ConfigurationProvider)
             // better than having to use select(e => new ClassName{ ... })
@@ -30,10 +30,14 @@ namespace API.Data
             // a benefit of this is that you no longer need to include additional tables, 
             // automapper will do this automatically
 
-            return await _context.Users
+            var query = _context.Users
                 .Where(e => e.UserName.ToLower().Trim() == username.ToLower().Trim())
                 .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync();
+                .AsQueryable();
+
+            if (isCurrentUser.HasValue && isCurrentUser.Value) query = query.IgnoreQueryFilters();
+
+            return await query.FirstOrDefaultAsync();
 
             // var user = await GetUserByUserNameAsync(username);
             // var mappedMember = _mapper.Map<MemberDto>(user);
@@ -80,6 +84,15 @@ namespace API.Data
         public async Task<AppUser> GetUserByIdAsync(int id)
         {
             return await _context.Users.FindAsync(id);
+        }
+
+        public async Task<AppUser> GetUserByPhotoId(int photoId)
+        {
+            return await _context.Users
+                .Include(u => u.Photos)
+                .IgnoreQueryFilters()
+                .Where(u => u.Photos.Any(p => p.Id == photoId))
+                .FirstOrDefaultAsync();
         }
 
         public async Task<AppUser> GetUserByUserNameAsync(string username)

@@ -83,18 +83,20 @@ namespace API.Controllers
 
         [Description("approve photo")]
         [Authorize(Policy = "RequireModerateRole")]
-        [HttpPost("photos-to-moderate")]
-        public async Task<ActionResult> ApprovePhoto([FromBody] PhotoForApprovalDto photoForApprovalDto)
+        [HttpPost("photos-to-moderate/{photoId}")]
+        public async Task<ActionResult> ApprovePhoto(int photoId)
         {
-            var user = await _unitOfWork.UserRepository.GetUserByUserNameAsync(photoForApprovalDto.UserName);
-            var photo = await _unitOfWork.PhotoRepository.GetPhotoById(photoForApprovalDto.Id);
+            var photo = await _unitOfWork.PhotoRepository.GetPhotoById(photoId);
+
+            if (photo == null) return NotFound("Photo not found");
+
+            var user = await _unitOfWork.UserRepository.GetUserByPhotoId(photoId);
 
             if (user == null) return NotFound("User not found");
-            if (photo == null) return NotFound("Photo not found");
 
             photo.IsApproved = true;
 
-            if (user.Photos.Any(p => !p.IsMain))
+            if (!user.Photos.Any(p => p.IsMain))
             {
                 photo.IsMain = true;
             }

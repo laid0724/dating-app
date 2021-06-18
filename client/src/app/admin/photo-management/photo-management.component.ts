@@ -34,15 +34,14 @@ export class PhotoManagementComponent implements OnInit, OnDestroy {
         takeUntil(this.destroyer$)
       )
       .subscribe((photos: PhotoForApproval[]) => {
-        console.log(photos);
         this.photos = photos;
         this.loading = false;
       });
   }
 
-  approvePhoto(photo: PhotoForApproval): void {
+  approvePhoto(photoId: number): void {
     this.adminService
-      .approvePhoto(photo)
+      .approvePhoto(photoId)
       .subscribe((approvedPhoto: PhotoForApproval) => this.refreshPhotos());
   }
 

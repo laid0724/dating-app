@@ -33,11 +33,9 @@ export class AdminService {
     return this.http.get<PhotoForApproval[]>(this.moderatePhotoEndpoint);
   }
 
-  approvePhoto(photo: PhotoForApproval): Observable<PhotoForApproval> {
+  approvePhoto(photoId: number): Observable<PhotoForApproval> {
     return this.http
-      .post<PhotoForApproval>(this.moderatePhotoEndpoint, {
-        ...photo,
-      })
+      .post<PhotoForApproval>(this.moderatePhotoEndpoint + `/${photoId}`, {})
       .pipe(tap(() => this.membersService.resetCache()));
   }
 
