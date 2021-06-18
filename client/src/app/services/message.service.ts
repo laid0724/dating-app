@@ -9,6 +9,7 @@ import { Group } from '../models/group';
 import { Message } from '../models/message';
 import { PaginatedResult } from '../models/pagination';
 import { User } from '../models/users';
+import { BusyService } from './busy.service';
 
 export type MessageContainer = 'Inbox' | 'Outbox' | 'Unread';
 
@@ -22,9 +23,10 @@ export class MessageService {
   private messageThreadSource$ = new BehaviorSubject<Message[]>([]);
   messageThread$ = this.messageThreadSource$.asObservable();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private busyService: BusyService) {}
 
   createHubConnection(user: User, otherUserName: string): void {
+    this.busyService.busy();
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(`${this.hubEndpoint}?user=${otherUserName}`, {
         accessTokenFactory: () => user.token,
@@ -32,7 +34,10 @@ export class MessageService {
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection.start().catch((error) => console.error(error));
+    this.hubConnection
+      .start()
+      .catch((error) => console.error(error))
+      .finally(() => this.busyService.idle());
 
     this.hubConnection.on('ReceiveMessageThread', (messages: Message[]) => {
       this.messageThreadSource$.next(messages);
@@ -62,6 +67,7 @@ export class MessageService {
 
   stopHubConnection(): void {
     if (this.hubConnection) {
+      this.clearMessageThread();
       this.hubConnection.stop().catch((error) => console.error(error));
     }
   }
