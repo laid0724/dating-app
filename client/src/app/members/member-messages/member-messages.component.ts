@@ -37,6 +37,8 @@ export class MemberMessagesComponent implements OnDestroy {
     }
   }
 
+  loading = false;
+
   @Input() username: string;
   // @Input() messages: Message[];
   messageContent: string;
@@ -54,10 +56,12 @@ export class MemberMessagesComponent implements OnDestroy {
     //     this.messageForm.reset();
     //   });
 
+    this.loading = true;
     this.messageService
       .sendMessageToHub(this.username, this.messageContent)
       .subscribe(() => {
         this.messageForm.reset();
+        this.loading = false;
       });
   }
 

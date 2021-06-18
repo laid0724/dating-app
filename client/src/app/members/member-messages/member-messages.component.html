@@ -1,10 +1,10 @@
 <ng-container *ngIf="messageService.messageThread$ | async; let messages">
   <div class="card">
-    <div class="card-body pt-0">
+    <div class="card-body pt-0" #chatMessagesContainer>
       <div *ngIf="messages?.length < 1">
         No messages yet... why don't you say hi?
       </div>
-      <ul *ngIf="messages?.length > 0" class="chat" #chatMessagesContainer>
+      <ul *ngIf="messages?.length > 0" class="chat">
         <li *ngFor="let message of messages">
           <div>
             <span class="chat-img float-right">
@@ -71,11 +71,12 @@
           />
           <div class="input-group-append">
             <button
-              [disabled]="!messageForm.valid"
+              [disabled]="!messageForm.valid || loading"
               class="btn btn-primary"
               type="submit"
             >
-              Send
+              <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+              <ng-container *ngIf="!loading">Send</ng-container>
             </button>
           </div>
         </div>
