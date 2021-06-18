@@ -81,11 +81,11 @@ It is recommended that you generate your keys/password via https://passwordsgene
 2. Go to settings tab, and under Config Vars, enter the key:value pair settings of your `appsetting.json`
 3. Login to heroku via its CLI and add heroku to your remote: `heroku git:remote -a {appName}`
 4. Set dotnetcore buildpack for the app: `heroku buildpacks:set https://github.com/jincod/dotnetcore-buildpack`
-6. Set your heroku environment to production: `heroku config:set ASPNETCORE_ENVIRONMENT=Production`
-7. Build production output of angular project: `cd client` and `npm run build:prod`
-8. Deploy dotnet project: `git push heroku master`
+5. Set your heroku environment to production: `heroku config:set ASPNETCORE_ENVIRONMENT=Production`
+6. Build production output of angular project: `cd client` and `npm run build:prod` and commit them the output to the codebase (do not gitignore these, heroku needs the file!)
+7. Deploy dotnet project: `git push heroku master`
 
-Once you've setup your heroku app, you can just repeat steps 7 & 8 for continuous deployment, unless you need to add further environment variables.
+Once you've setup your heroku app, you can just repeat steps 6 & 7 for continuous deployment, unless you need to add further environment variables.
 
 ---
 ##### Features to be implemented / Bugs to be fixed, in no particular order:
@@ -95,7 +95,6 @@ Once you've setup your heroku app, you can just repeat steps 7 & 8 for continuou
 - impl unread messages badges via signalr
 - swiping left/right like tinder
 - block/report users, admin can read/respond to reports and ban users
-- transfer db to dockerized pgsql
 - separate admin angular project with statistics displayed via ngx charts, manage users and content, etc.
 - events / news / announcement center
 - user location / google map api integration
