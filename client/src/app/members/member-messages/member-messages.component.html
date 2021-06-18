@@ -1,7 +1,7 @@
 <ng-container *ngIf="messageService.messageThread$ | async; let messages">
   <div class="card">
     <div class="card-body pt-0">
-      <div *ngIf="messages?.length < 1" class="pb-3">
+      <div *ngIf="messages?.length < 1">
         No messages yet... why don't you say hi?
       </div>
       <ul *ngIf="messages?.length > 0" class="chat" #chatMessagesContainer>
