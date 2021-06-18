@@ -5,6 +5,7 @@ import { RolesModalComponent } from 'src/app/modals/roles-modal/roles-modal.comp
 import { Role, User } from 'src/app/models/users';
 import { AccountService } from 'src/app/services/account.service';
 import { AdminService } from 'src/app/services/admin.service';
+import { MembersService } from "src/app/services/members.service";
 
 export interface CheckboxOption {
   name: Role;
@@ -26,6 +27,7 @@ export class UserManagementComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private accountService: AccountService,
+    private memberService: MembersService,
     private modalService: BsModalService
   ) {
     this.currentUser$ = accountService.currentUser$;
@@ -63,6 +65,7 @@ export class UserManagementComponent implements OnInit {
             .updateUserRoles(user.userName, rolesToUpdate)
             .subscribe(() => {
               user.roles = [...rolesToUpdate];
+              this.memberService.resetCache();
             });
         }
       }

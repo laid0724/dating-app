@@ -31,6 +31,10 @@ namespace API.Data
             // automapper will do this automatically
 
             var query = _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(r => r.Role)
+                .AsNoTracking()
+                .Where(u => u.UserRoles.Any(r => r.Role.Name == "Member"))
                 .Where(e => e.UserName.ToLower().Trim() == username.ToLower().Trim())
                 .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
                 .AsQueryable();
@@ -55,7 +59,12 @@ namespace API.Data
             // return mappedMembers;
 
             // PAGED && FILTERING LOGIC:
-            var query = _context.Users.AsQueryable();
+            var query = _context.Users
+                .Include(u => u.UserRoles)
+                    .ThenInclude(r => r.Role)
+                .AsNoTracking()
+                .Where(u => u.UserRoles.Any(r => r.Role.Name == "Member"))
+                .AsQueryable();
 
             query = query.Where(e => e.UserName != userParams.CurrentUserName);
             query = query.Where(e => e.Gender == userParams.Gender);
