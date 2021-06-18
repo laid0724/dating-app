@@ -27,8 +27,8 @@ namespace API.Data
                 await roleManager.CreateAsync(role);
             }
 
-            if (env == Environments.Development)
-            {
+            // if (env == Environments.Development)
+            // {
                 var userDefaultPassword = config.GetValue<string>("SeederConfig:UserPassword");
                 var userData = await System.IO.File.ReadAllTextAsync("Data/UserSeedData.json"); // read seed data
                 var users = JsonSerializer.Deserialize<List<AppUser>>(userData); // converts the json to c# objects
@@ -49,7 +49,7 @@ namespace API.Data
                         await userManager.AddToRoleAsync(user, "Member");
                     }
                 }
-            }
+            // }
 
             var adminDefaultPassword = config.GetValue<string>("SeederConfig:AdminPassword");
 
