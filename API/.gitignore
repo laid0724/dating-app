@@ -8,5 +8,3 @@ Thumbs.db
 *.db*
 
 appsettings.Development.json
-
-wwwroot/*
